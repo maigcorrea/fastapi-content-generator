@@ -10,7 +10,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    restart: on-failure
 
   db:
     image: postgres:15
@@ -21,3 +23,8 @@ services:
       POSTGRES_DB: hashtagdb
     ports:
       - "5432:5432"
+    healthcheck:                         # <- esto es nuevo, garantiza que el contenedor web solo arrancará después de que db esté listo.
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
