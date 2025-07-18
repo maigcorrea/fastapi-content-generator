@@ -1,5 +1,4 @@
 # HastagsGenerator
-Un generador de hashtags a partir de imágenes es un proyecto perfecto para aprender Python orientado a IA + web + arquitectura limpia, y sí: la arquitectura hexagonal (o Clean Architecture) se puede aplicar perfectamente en Python.
 
 Este proyecto es una API de generación de hashtags a partir de imágenes, construida con **FastAPI**, **PostgreSQL**, **Docker** y con estructura de **arquitectura hexagonal (Clean Architecture)**.
 Proyecto para aprender Python orientado a IA + web + arquitectura limpia
