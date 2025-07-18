@@ -202,4 +202,11 @@ Si usas Windows, se recomienda trabajar desde WSL con Ubuntu para evitar problem
 
 Usa code . desde tu terminal WSL para abrir Visual Studio Code directamente conectado a Ubuntu.
 
-Este proyecto está estructurado para escalar: puedes implementar usuarios, lógica de IA, subida de imágenes, y panel de administración sin romper la arquitectura.
+Este proyecto está estructurado para escalar en el futuro.
+
+## Autores
+- [@maigcorrea](https://www.github.com/maigcorrea)
+
+- © 2025 Ana Maite García Correa. Todos los derechos reservados.
+No se permite el uso, copia, modificación o distribución de este software sin permiso explícito por escrito.
+
