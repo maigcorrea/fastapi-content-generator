@@ -28,6 +28,7 @@ Un generador de hashtags a partir de imágenes es un proyecto perfecto para apre
 | `IA`      | `Transformers, CLIP, torchvision, YOLO, etc. para extracción de contenido visual o tags` | 
 
 ## 🧱 Estructura de carpetas hexagonal en Python (inspirada en tu backend NestJS)
+```
 project/
 │
 ├── app/
@@ -47,6 +48,7 @@ project/
 ├── requirements.txt
 ├── docker-compose.yml
 └── .env
+```
 ## 🧩 Fases del proyecto
 ### 🟩 Fase 1: Login, registro, panel básico
 - Usuarios con login/registro (JWT)
