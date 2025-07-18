@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.infrastructure.db.db_config import Base, engine
+from app.infrastructure.db.models.user_model import UserModel # Import the UserModel to ensure it's registered with SQLAlchemy
 
 app = FastAPI(title="Hashtag Generator API")
 
