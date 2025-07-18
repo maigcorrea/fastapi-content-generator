@@ -1,6 +1,8 @@
 # HastagsGenerator
 Un generador de hashtags a partir de imágenes es un proyecto perfecto para aprender Python orientado a IA + web + arquitectura limpia, y sí: la arquitectura hexagonal (o Clean Architecture) se puede aplicar perfectamente en Python.
 
+Este proyecto es una API de generación de hashtags a partir de imágenes, construida con **FastAPI**, **PostgreSQL**, **Docker** y con estructura de **arquitectura hexagonal (Clean Architecture)**.
+
 ## ✅ Tu idea resumida como MVP
 - Login / Registro de usuarios
 
@@ -17,6 +19,19 @@ Un generador de hashtags a partir de imágenes es un proyecto perfecto para apre
 - Contenedores Docker
 
 - Arquitectura hexagonal en Python (Clean Architecture con capas separadas: domain, application, infrastructure, interface)
+
+## ✅ Tecnologías usadas
+
+- Python 3.11
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+- Docker + Docker Compose
+- Pydantic
+- Uvicorn
+- WSL (Ubuntu) en Windows (opcional pero recomendado)
+- Arquitectura hexagonal
+
 
 ## 🧠 Tecnologías sugeridas por capa
 | Capa | Tecnología     |
@@ -46,6 +61,7 @@ project/
 │   └── main.py                # Arranque de la app
 │
 ├── requirements.txt
+├── Dockerfile
 ├── docker-compose.yml
 └── .env
 ```
@@ -77,3 +93,111 @@ project/
 - Filtro por fechas, cantidad de imágenes
 
 - Estadísticas simples
+
+
+## ⚙️ Pasos para levantar el proyecto
+
+### 1. Clona el repositorio (dentro de WSL si usas Windows)
+
+```bash
+git clone https://github.com/tu-usuario/hashtag-generator.git
+cd hashtag-generator
+
+```
+### 2. Crea la estructura base
+
+```
+mkdir -p app/{domain/{entities,repositories},application/use_cases,infrastructure/db/{models,repositories},interfaces}
+touch app/main.py Dockerfile docker-compose.yml .env requirements.txt
+```
+
+### 3. Añade el contenido inicial
+
+#### app/main.py
+```
+from fastapi import FastAPI
+
+app = FastAPI(title="Hashtag Generator API")
+
+@app.get("/")
+def read_root():
+    return {"message": "Hashtag Generator API is running 🚀"}
+```
+
+#### Dockerfile
+```
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./app ./app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+```
+#### docker-compose.yml
+```
+version: "3.9"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hashtagdb
+    ports:
+      - "5432:5432"
+```
+
+#### .env
+```
+# PostgreSQL configuration - NO PÚBLICO, ES UN EJEMPLO
+POSTGRES_USER=your_postgres_user
+POSTGRES_PASSWORD=your_postgres_password
+POSTGRES_DB=your_database_name
+
+```
+
+#### requirements.txt
+```
+fastapi
+uvicorn[standard]
+psycopg2-binary
+sqlalchemy
+python-dotenv
+```
+
+## Levantar el entorno 
+```
+docker-compose up --build
+```
+Esto iniciará FastAPI en http://localhost:8000.
+
+## 🧪 Endpoints disponibles
+GET / → Verifica que la API está corriendo
+
+GET /docs → Documentación interactiva Swagger
+
+GET /redoc → Documentación ReDoc
+
+## 📌 Notas adicionales
+Si usas Windows, se recomienda trabajar desde WSL con Ubuntu para evitar problemas de rutas y permisos.
+
+Usa code . desde tu terminal WSL para abrir Visual Studio Code directamente conectado a Ubuntu.
+
+Este proyecto está estructurado para escalar: puedes implementar usuarios, lógica de IA, subida de imágenes, y panel de administración sin romper la arquitectura.

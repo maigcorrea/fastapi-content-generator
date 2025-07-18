@@ -1,0 +1,19 @@
+# Entornos virtuales
+venv/
+__pycache__/
+*.pyc
+
+# Configuración de entorno
+.env
+
+# Docker
+*.log
+*.pid
+
+# IDEs
+.vscode/
+.idea/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
