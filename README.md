@@ -56,9 +56,13 @@ project/
 │   ├── application/           # Casos de uso
 │   │   └── use_cases/
 │   ├── infrastructure/        # Implementaciones reales
-│   │   ├── db/ (models, SQLAlchemy)
+│   │   ├── db/ (models, SQLAlchemy) # Acceso a la bd
+|   |   |    ├── models/         # Modelos ORM (SQLAlchemy)
+|   |   |    └── repositories/   # Implementaciones concretas de los puertos (lógica para acceder a los datos)
 │   │   ├── services/ (ej. IA, imágenes)
-│   │   └── repositories/
+|   |   ├── controllers/         # routers / endpoints REST
+|   |   ├── scheduler/           # tareas programadas
+|   |   ├── auth/                # autenticación (si aplica)
 │   ├── interfaces/            # API REST (FastAPI routers)
 │   └── main.py                # Arranque de la app
 │
@@ -67,6 +71,16 @@ project/
 ├── docker-compose.yml
 └── .env
 ```
+## 🧠 Equivalencias con NestJS
+| NestJS | FastAPI     |
+| :-------- | :------- | 
+| `/domain/entities/`      | `/domain/entities/` |
+| `/domain/ports/`      | `	/domain/repositories/ (en este caso)` |
+| `/infrastructure/persistence/`      | `/infrastructure/db/repositories/` |
+| `/infrastructure/controllers/`      | `/infrastructure/controllers/` |
+| `/infrastructure/services/`      | `/infrastructure/services/` | 
+| `/infrastructure/scheduler/`      | `/infrastructure/scheduler/` | 
+
 ## 🧩 Fases del proyecto
 ### 🟩 Fase 1: Login, registro, panel básico
 - Usuarios con login/registro (JWT)
