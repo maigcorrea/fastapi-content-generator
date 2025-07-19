@@ -81,6 +81,9 @@ project/
 | `/infrastructure/services/`      | `/infrastructure/services/` | 
 | `/infrastructure/scheduler/`      | `/infrastructure/scheduler/` | 
 
+En NestJS sueles agrupar por dominio funcional, aquí en Python preferimos agrupar por tipo de tecnología dentro de infraestructura, lo que sigue siendo muy limpio y flexible.
+- Esta estructura es igual de válida que en NestJS, pero orientada a claridad técnica en vez de modularidad de dominio
+
 ## 🧩 Fases del proyecto
 ### 🟩 Fase 1: Login, registro, panel básico
 - Usuarios con login/registro (JWT)
