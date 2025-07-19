@@ -80,6 +80,8 @@ project/
 | `/domain/ports/`      | `	/domain/repositories/ (en este caso)` |
 | `/infrastructure/persistence/`      | `/infrastructure/db/repositories/` |
 | `/infrastructure/controllers/`      | `/infrastructure/controllers/` |
+| `/infrastructure/dto/`      | `/infrastructure/dto/` | 
+| `/infrastructure/mappers/`      | `/infrastructure/mappers/` | 
 | `/infrastructure/services/`      | `/infrastructure/services/` | 
 | `/infrastructure/scheduler/`      | `/infrastructure/scheduler/` | 
 
