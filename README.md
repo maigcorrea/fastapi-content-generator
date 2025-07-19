@@ -116,77 +116,29 @@ En NestJS sueles agrupar por dominio funcional, aquí en Python preferimos agrup
 
 - Estadísticas simples
 
+# 🚀 Guía de despliegue local - Hashtag Generator API
 
+Esta guía te permitirá clonar y desplegar este proyecto siguiendo arquitectura hexagonal usando Docker y FastAPI.
+
+---
 ## ⚙️ Pasos para levantar el proyecto
 
-### 1. Clona el repositorio (dentro de WSL si usas Windows)
+### 1. Clona el repositorio (preferentemente dentro de WSL si usas Windows)
 
 ```bash
 git clone https://github.com/tu-usuario/hashtag-generator.git
 cd hashtag-generator
 
 ```
-### 2. Crea la estructura base
+### 2. Crea el archivo .env
+Este archivo contiene las variables sensibles y no está incluido en el repositorio por seguridad.
+✅ También puedes usar un archivo .env.example como plantilla, está disponible en el repositorio.
 
+```bash
+touch .env
 ```
-mkdir -p app/{domain/{entities,repositories},application/use_cases,infrastructure/db/{models,repositories},interfaces}
-touch app/main.py Dockerfile docker-compose.yml .env requirements.txt
-```
+Añade el siguiente contenido (ajústalo si es necesario):
 
-### 3. Añade el contenido inicial
-
-#### app/main.py
-```
-from fastapi import FastAPI
-
-app = FastAPI(title="Hashtag Generator API")
-
-@app.get("/")
-def read_root():
-    return {"message": "Hashtag Generator API is running 🚀"}
-```
-
-#### Dockerfile
-```
-FROM python:3.11-slim
-
-WORKDIR /app
-
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY ./app ./app
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-```
-#### docker-compose.yml
-```
-version: "3.9"
-
-services:
-  web:
-    build: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./app:/app/app
-    env_file:
-      - .env
-    depends_on:
-      - db
-
-  db:
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: hashtagdb
-    ports:
-      - "5432:5432"
-```
-
-#### .env
 ```
 # PostgreSQL configuration - NO PÚBLICO, ES UN EJEMPLO
 POSTGRES_USER=your_postgres_user
@@ -195,35 +147,49 @@ POSTGRES_DB=your_database_name
 
 ```
 
-#### requirements.txt
-```
-fastapi
-uvicorn[standard]
-psycopg2-binary
-sqlalchemy
-python-dotenv
-email-validator
+### 3. Instala dependencias **(solo si NO usas Docker)**
+Si prefieres correr la app **sin** contenedores:
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## Levantar el entorno 
+Para **desactivar** el entorno virtual cuando termines de trabajar, simplemente ejecuta:
+```bash
+deactivate
+```
+
+No elimina el entorno ni los paquetes; simplemente deja de estar activo. Cuando quieras volver a usarlo, puedes reactivarlo con:
+```bash
+source venv/bin/activate
+(En Windows: venv\Scripts\activate)
+```
+---
+
+
+## ▶️ Levantar el entorno con Docker 
 ```
 docker-compose up --build
 ```
 Esto iniciará FastAPI en http://localhost:8000.
 
 ## 🧪 Endpoints disponibles
-GET / → Verifica que la API está corriendo
+📍 GET / → http://localhost:8000 - Verifica que la API está corriendo
 
-GET /docs → Documentación interactiva Swagger
+📄 GET /docs → http://localhost:8000/docs - Documentación interactiva Swagger
 
-GET /redoc → Documentación ReDoc
+📘 GET /redoc → http://localhost:8000/redoc - Documentación ReDoc
 
 ## 📌 Notas adicionales
-Si usas Windows, se recomienda trabajar desde WSL con Ubuntu para evitar problemas de rutas y permisos.
+- Si usas Windows, se recomienda trabajar desde **WSL con Ubuntu** para evitar problemas de rutas y permisos.
 
-Usa code . desde tu terminal WSL para abrir Visual Studio Code directamente conectado a Ubuntu.
+- Usa `code .` desde tu terminal WSL para abrir Visual Studio Code directamente conectado a tu entorno Linux Ubuntu.
 
-Este proyecto está estructurado para escalar en el futuro.
+- Asegúrate de que Docker esté correctamente instalado y corriendo.
+
+- Este proyecto está estructurado para escalar en el futuro.
 
 ## Autores
 - [@maigcorrea](https://www.github.com/maigcorrea)
