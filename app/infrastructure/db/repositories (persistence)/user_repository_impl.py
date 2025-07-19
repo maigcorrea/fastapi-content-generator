@@ -6,6 +6,7 @@ from app.domain.entities.user_entity import User
 from app.domain.repositories.user_repository import UserRepository #Importamos la interfaz UserRepository
 from app.infrastructure.db.models.user_model import UserModel
 
+
 # Desarrollamos la lógica de los métodos definidos en la interfaz UserRepository
 # Esta clase implementa la interfaz UserRepository y proporciona la lógica para interactuar con la base de datos usando SQLAlchemy.
 class UserRepositoryImpl(UserRepository):
