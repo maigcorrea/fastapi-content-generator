@@ -51,14 +51,14 @@ project/
 ├── app/
 │   ├── domain/                 # Entidades y puertos
 │   │   ├── entities/
-│   │   ├── repositories/
+│   │   ├── repositories/         # Equivalente a /ports en NestJs
 │   │   └── services/
 │   ├── application/           # Casos de uso
 │   │   └── use_cases/
 │   ├── infrastructure/        # Implementaciones reales
 │   │   ├── db/ (models, SQLAlchemy) # Acceso a la bd
 |   |   |    ├── models/         # Modelos ORM (SQLAlchemy)
-|   |   |    └── repositories/   # Implementaciones concretas de los puertos (lógica para acceder a los datos)
+|   |   |    └── repositories/   # Implementaciones concretas de los puertos (lógica para acceder a los datos). Equivalente a /persistence en NestJS
 |   |   ├── dto/                # Para adaptar datos HTTP a entidades o viceversa
 |   |   ├── mappers/            # 	Para transformar entre entidades de dominio ↔ modelos ORM ↔ DTOs
 │   │   ├── services/ (ej. IA, imágenes)
