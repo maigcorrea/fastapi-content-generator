@@ -62,10 +62,9 @@ project/
 |   |   ├── dto/                # Para adaptar datos HTTP a entidades o viceversa
 |   |   ├── mappers/            # 	Para transformar entre entidades de dominio ↔ modelos ORM ↔ DTOs
 │   │   ├── services/ (ej. IA, imágenes)
-|   |   ├── controllers/         # routers / endpoints REST
 |   |   ├── scheduler/           # tareas programadas
 |   |   ├── auth/                # autenticación (si aplica)
-│   ├── interfaces/            # API REST (FastAPI routers)
+│   ├── interfaces/            # API REST (FastAPI routers) / endpoints REST
 │   └── main.py                # Arranque de la app
 │
 ├── requirements.txt
@@ -79,7 +78,7 @@ project/
 | `/domain/entities/`      | `/domain/entities/` |
 | `/domain/ports/`      | `	/domain/repositories/ (en este caso)` |
 | `/infrastructure/persistence/`      | `/infrastructure/db/repositories/` |
-| `/infrastructure/controllers/`      | `/infrastructure/controllers/` |
+| `/infrastructure/controllers/`      | `/interfaces/loquesea.router.py` |
 | `/infrastructure/dto/`      | `/infrastructure/dto/` | 
 | `/infrastructure/mappers/`      | `/infrastructure/mappers/` | 
 | `/infrastructure/services/`      | `/infrastructure/services/` | 
