@@ -59,6 +59,8 @@ project/
 │   │   ├── db/ (models, SQLAlchemy) # Acceso a la bd
 |   |   |    ├── models/         # Modelos ORM (SQLAlchemy)
 |   |   |    └── repositories/   # Implementaciones concretas de los puertos (lógica para acceder a los datos)
+|   |   ├── dto/                # Para adaptar datos HTTP a entidades o viceversa
+|   |   ├── mappers/            # 	Para transformar entre entidades de dominio ↔ modelos ORM ↔ DTOs
 │   │   ├── services/ (ej. IA, imágenes)
 |   |   ├── controllers/         # routers / endpoints REST
 |   |   ├── scheduler/           # tareas programadas
