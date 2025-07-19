@@ -202,6 +202,7 @@ uvicorn[standard]
 psycopg2-binary
 sqlalchemy
 python-dotenv
+email-validator
 ```
 
 ## Levantar el entorno 
