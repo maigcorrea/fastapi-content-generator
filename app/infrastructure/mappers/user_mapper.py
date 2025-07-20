@@ -2,6 +2,7 @@ from app.domain.entities.user_entity import User
 from app.infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
 from uuid import uuid4
 from datetime import datetime
+from app.infrastructure.security.password import hash_password
 
 class UserMapper:
 
@@ -11,7 +12,7 @@ class UserMapper:
             id=uuid4(),
             username=dto.username,
             email=dto.email,
-            password=dto.password,
+            password=hash_password(dto.password),  # ← ahora se encripta
             is_admin=False,
             created_at=datetime.utcnow()
         )
