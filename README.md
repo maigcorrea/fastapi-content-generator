@@ -67,7 +67,14 @@ project/
 │   ├── interfaces/            # API REST (FastAPI routers) / endpoints REST
 │   └── main.py                # Arranque de la app
 │
-├── app/                # Frontend
+├── frontend/                # Frontend basado en NextJs
+|   ├── src/
+│   ├── app/
+│   │   ├── page.tsx              # página raíz
+│   │   └── layout.tsx            # layout global
+│   ├── components/
+|   ├── Dockerfile
+|   ├── Resto de archivos               
 ├── requirements.txt
 ├── Dockerfile
 ├── docker-compose.yml
