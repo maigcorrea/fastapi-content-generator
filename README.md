@@ -186,7 +186,7 @@ Esto iniciará FastAPI en http://localhost:8000.
 ## 📌 Notas adicionales
 - Si usas Windows, se recomienda trabajar desde **WSL con Ubuntu** para evitar problemas de rutas y permisos.
 
-- También, asegurate de que tienes instalado nodejs dentro de WSL.
+- También, asegurate de que tener instalado npm y nodejs dentro de WSL, y de tener bien configurado npm para que no esté apuntando a la instalación de Windows.
 
 - Usa `code .` desde tu terminal WSL para abrir Visual Studio Code directamente conectado a tu entorno Linux Ubuntu.
 
