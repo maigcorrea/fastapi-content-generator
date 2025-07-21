@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.infrastructure.db.db_config import SessionLocal
-from app.infrastructure.db.repositories.user_repository_impl import UserRepositoryImpl
-from app.application.use_cases.create_user_use_case import CreateUserUseCase
-from app.infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
+from infrastructure.db.db_config import SessionLocal
+from infrastructure.db.repositories.user_repository_impl import UserRepositoryImpl
+from application.use_cases.create_user_use_case import CreateUserUseCase
+from infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
 
 router = APIRouter(prefix="/users", tags=["Users"])
 

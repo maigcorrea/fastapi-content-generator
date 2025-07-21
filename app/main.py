@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from app.infrastructure.db.db_config import Base, engine
+from infrastructure.db.db_config import Base, engine
 from fastapi.middleware.cors import CORSMiddleware # Import CORS middleware
-from app.infrastructure.db.models.user_model import UserModel # Import the UserModel to ensure it's registered with SQLAlchemy
-from app.interfaces import user_router  # importa el router
+from infrastructure.db.models.user_model import UserModel # Import the UserModel to ensure it's registered with SQLAlchemy
+from interfaces import user_router  # importa el router
 
 app = FastAPI(title="Hashtag Generator API")
 
@@ -16,11 +16,10 @@ app.include_router(user_router.router)  # registra el router
 
 
 # CORS settings
+
 origins = [
-    origins = [
     "http://localhost:5173",
     "http://frontend:5173",  # para acceso dentro de docker
-]
 ]
 
 app.add_middleware(

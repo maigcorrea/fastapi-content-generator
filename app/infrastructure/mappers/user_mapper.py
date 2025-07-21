@@ -1,8 +1,8 @@
-from app.domain.entities.user_entity import User
-from app.infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
+from domain.entities.user_entity import User
+from infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
 from uuid import uuid4
 from datetime import datetime
-from app.infrastructure.security.password import hash_password
+from infrastructure.security.password import hash_password
 
 class UserMapper:
 

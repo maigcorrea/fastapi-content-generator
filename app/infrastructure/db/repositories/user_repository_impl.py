@@ -2,9 +2,9 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 import uuid
 
-from app.domain.entities.user_entity import User
-from app.domain.repositories.user_repository import UserRepository #Importamos la interfaz UserRepository
-from app.infrastructure.db.models.user_model import UserModel
+from domain.entities.user_entity import User
+from domain.repositories.user_repository import UserRepository #Importamos la interfaz UserRepository
+from infrastructure.db.models.user_model import UserModel
 
 
 # Desarrollamos la lógica de los métodos definidos en la interfaz UserRepository

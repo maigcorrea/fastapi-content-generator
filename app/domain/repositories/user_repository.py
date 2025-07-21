@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
-from app.domain.entities.user_entity import User
+from domain.entities.user_entity import User
 import uuid
 
 class UserRepository(ABC):

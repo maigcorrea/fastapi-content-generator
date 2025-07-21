@@ -1,6 +1,6 @@
-from app.domain.repositories.user_repository import UserRepository
-from app.infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
-from app.infrastructure.mappers.user_mapper import UserMapper
+from domain.repositories.user_repository import UserRepository
+from infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
+from infrastructure.mappers.user_mapper import UserMapper
 
 class CreateUserUseCase:
     def __init__(self, user_repository: UserRepository):
