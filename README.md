@@ -65,6 +65,8 @@ project/
 |   |   ├── scheduler/           # tareas programadas
 |   |   ├── auth/                # autenticación (si aplica)
 │   ├── interfaces/            # API REST (FastAPI routers) / endpoints REST
+|   ├── requirements.txt
+|   ├── Dockerfile
 │   └── main.py                # Arranque de la app
 │
 ├── frontend/                # Frontend basado en NextJs
@@ -75,8 +77,6 @@ project/
 │   ├── components/
 |   ├── Dockerfile
 |   ├── Resto de archivos               
-├── requirements.txt
-├── Dockerfile
 ├── docker-compose.yml
 └── .env
 ```
@@ -178,12 +178,24 @@ source venv/bin/activate
 
 
 ## ▶️ Levantar el entorno con Docker 
+Este proyecto incluye dos contenedores principales:
+
+- 📦 Backend (FastAPI)
+
+- 🖥️ Frontend (NextJs)
+
+Para construir e iniciar todos los servicios:
 ```
 docker-compose up --build
 ```
-Esto iniciará FastAPI en http://localhost:8000.
+Esto iniciará: 
+⚙️ FastAPI en → http://localhost:8000
 
-## 🧪 Endpoints disponibles
+🧩 Frontend en → http://localhost:3000
+
+El contenedor del frontend ejecutará automáticamente npm install y npm run dev, así que no necesitas hacer nada más desde la terminal.
+
+## 🧪 Endpoints disponibles (API REST)
 📍 GET / → http://localhost:8000 - Verifica que la API está corriendo
 
 📄 GET /docs → http://localhost:8000/docs - Documentación interactiva Swagger
@@ -197,7 +209,9 @@ Esto iniciará FastAPI en http://localhost:8000.
 
 - Usa `code .` desde tu terminal WSL para abrir Visual Studio Code directamente conectado a tu entorno Linux Ubuntu.
 
-- Asegúrate de que Docker esté correctamente instalado y corriendo.
+- Asegúrate de que Docker + Docker Compose esté correctamente instalado y corriendo.
+
+- Los contenedores se reiniciarán automáticamente en caso de fallo (restart: on-failure).
 
 - Este proyecto está estructurado para escalar en el futuro.
 
