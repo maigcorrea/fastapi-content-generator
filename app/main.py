@@ -18,8 +18,8 @@ app.include_router(user_router.router)  # registra el router
 # CORS settings
 
 origins = [
-    "http://localhost:5173",
-    "http://frontend:5173",  # para acceso dentro de docker
+    "http://localhost:3000",
+    "http://frontend:3000",  # para acceso dentro de docker
 ]
 
 app.add_middleware(

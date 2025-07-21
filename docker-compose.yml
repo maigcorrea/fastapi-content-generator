@@ -28,3 +28,16 @@ services:
         interval: 5s
         timeout: 5s
         retries: 5
+  
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    environment:
+      - NODE_ENV=development
+    depends_on: # garantiza que el frontend espere a que el backend esté listo
+      - web
