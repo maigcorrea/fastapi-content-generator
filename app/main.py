@@ -17,8 +17,10 @@ app.include_router(user_router.router)  # registra el router
 
 # CORS settings
 origins = [
-    "http://localhost:5173",  # Puerto por defecto de Vite (React)
-    "http://localhost:3000",  # Puerto por defecto de Next.js o CRA
+    origins = [
+    "http://localhost:5173",
+    "http://frontend:5173",  # para acceso dentro de docker
+]
 ]
 
 app.add_middleware(

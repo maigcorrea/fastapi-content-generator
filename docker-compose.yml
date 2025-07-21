@@ -28,3 +28,15 @@ services:
         interval: 5s
         timeout: 5s
         retries: 5
+
+  frontend:
+    build: ./prueba-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./prueba-frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
