@@ -48,7 +48,7 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
 ```
 project/
 │
-├── app/
+├── app/                        # Backend FastAPI
 │   ├── domain/                 # Entidades y puertos
 │   │   ├── entities/
 │   │   ├── repositories/         # Equivalente a /ports en NestJs
@@ -67,6 +67,7 @@ project/
 │   ├── interfaces/            # API REST (FastAPI routers) / endpoints REST
 │   └── main.py                # Arranque de la app
 │
+├── app/                # Frontend
 ├── requirements.txt
 ├── Dockerfile
 ├── docker-compose.yml
