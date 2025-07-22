@@ -14,3 +14,8 @@ class UserResponseDto(BaseModel):
     email: EmailStr
     is_admin: bool
     created_at: datetime
+
+# Login DTO - Establece el formato para el inicio de sesión
+class LoginUserDto(BaseModel):
+    email: EmailStr
+    password: str
