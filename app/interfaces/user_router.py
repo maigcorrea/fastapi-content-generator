@@ -43,7 +43,7 @@ def create_user(dto: CreateUserDto, db: Session = Depends(get_db)):
 def login_user(dto: LoginUserDto, db: Session = Depends(get_db)):
     user_repo = UserRepositoryImpl(db)
     use_case = LoginUserUseCase(user_repo) # Aquí se crea el caso de uso de login
-    token = use_case.execute(dto) # Aquí se ejecuta el caso de uso de login
+    result = use_case.execute(dto) # Aquí se ejecuta el caso de uso de login
     
-    # Retornar el token JWT si el email/contraseña son correctos
-    return {"access_token": token, "token_type": "bearer"}
+    # Retornar el token JWT si el email/contraseña son correctos, y si el usuario es admin
+    return {"access_token": result["access_token"], "token_type": "bearer", "is_admin": result["is_admin"] }

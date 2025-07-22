@@ -28,7 +28,9 @@ class LoginUserUseCase:
     def __init__(self, user_repo: UserRepository):
         self.user_repo = user_repo
 
-    def execute(self, dto: LoginUserDto) -> str:
+    def execute(self, dto: LoginUserDto) -> dict: # dict especifica que el método devuelve un diccionario con el token y otros datos
+        # Primero, buscamos al usuario por su email
+        # Si no existe o la contraseña no coincide, lanzamos una excepción HTTP 401
         user = self.user_repo.get_by_email(dto.email)
 
         if not user or not pwd_context.verify(dto.password, user.password):
@@ -43,4 +45,7 @@ class LoginUserUseCase:
 
         # Generar el token JWT
         token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-        return token
+        return {
+            "access_token": token,
+            "is_admin": user.is_admin
+        }
