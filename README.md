@@ -98,7 +98,7 @@ En NestJS sueles agrupar por dominio funcional, aquí en Python preferimos agrup
 
 ## 🧩 Fases del proyecto
 ### 🟩 Fase 1: Login, registro, panel básico
-- Usuarios con login/registro (JWT)
+- Usuarios con login/registro (JWT con `python-jose[cryptography]` y `passlib[bcrypt]`)
 
 - PostgreSQL como base de datos
 
