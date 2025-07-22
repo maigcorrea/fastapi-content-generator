@@ -75,6 +75,7 @@ project/
 │   │   ├── page.tsx              # página raíz
 │   │   └── layout.tsx            # layout global
 │   ├── components/
+|   ├── services/                 # llamadas a la API
 |   ├── Dockerfile
 |   ├── Resto de archivos               
 ├── docker-compose.yml
