@@ -32,8 +32,12 @@ export default function RegisterForm() {
     try {
       const res = await registerUser(formData)
 
-      setMessage('¡Usuario registrado con éxito!')
-      setFormData({ username: '', email: '', password: '' }) // Limpieza del formulario
+      if (!res.error) {
+        setMessage('¡Usuario registrado con éxito!')
+        setFormData({ username: '', email: '', password: '' }) // Limpieza del formulario
+      }else{
+        setMessage('Enasa')
+      }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response?.data?.detail) {
         setMessage(`Error: ${error.response.data.detail}`)
