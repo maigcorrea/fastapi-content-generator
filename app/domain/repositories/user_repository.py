@@ -14,7 +14,7 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_email(self, email: str) -> Optional[User]:
+    def get_by_email(self, email: str) -> Optional[User]: # método es suficiente para que el LoginUserUseCase recupere al usuario por su email y luego compare contraseñas.
         pass
 
     @abstractmethod
