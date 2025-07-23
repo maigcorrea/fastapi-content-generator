@@ -2,9 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from infrastructure.db.db_config import SessionLocal
+from infrastructure.db.db_config import get_db
 from infrastructure.db.repositories.user_repository_impl import UserRepositoryImpl
 from application.use_cases.create_user_use_case import CreateUserUseCase
 from infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
+from infrastructure.auth.auth_dependencies import get_current_user
 
 # Importar el caso de uso de login y el DTO y el contexto de encriptación
 from application.use_cases.login_user_use_case import LoginUserUseCase
@@ -20,15 +22,15 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter(prefix="/users", tags=["Users"])
 
 # Dependency para obtener la sesión de DB
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# def get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
 
 @router.post("/", response_model=UserResponseDto, status_code=201)
-def create_user(dto: CreateUserDto, db: Session = Depends(get_db)):
+def create_user(dto: CreateUserDto, db: Session = Depends(get_db)): #current_user es para asegurarnos de que el usuario que crea otro usuario está autenticado
     user_repo = UserRepositoryImpl(db)
     use_case = CreateUserUseCase(user_repo)
 
