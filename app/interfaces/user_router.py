@@ -7,6 +7,7 @@ from infrastructure.db.repositories.user_repository_impl import UserRepositoryIm
 from application.use_cases.create_user_use_case import CreateUserUseCase
 from infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
 from infrastructure.auth.auth_dependencies import get_current_user
+from infrastructure.auth.auth_dependencies import get_current_admin_user
 
 # Importar el caso de uso de login y el DTO y el contexto de encriptación
 from application.use_cases.login_user_use_case import LoginUserUseCase
@@ -30,7 +31,7 @@ router = APIRouter(prefix="/users", tags=["Users"])
 #         db.close()
 
 @router.post("/", response_model=UserResponseDto, status_code=201)
-def create_user(dto: CreateUserDto, db: Session = Depends(get_db)): #current_user es para asegurarnos de que el usuario que crea otro usuario está autenticado
+def create_user(dto: CreateUserDto, db: Session = Depends(get_db)): #Proteger endpoint: current_user=Depends(get_current_user); current_user es para asegurarnos de que el usuario que crea otro usuario está autenticado
     user_repo = UserRepositoryImpl(db)
     use_case = CreateUserUseCase(user_repo)
 
@@ -38,7 +39,27 @@ def create_user(dto: CreateUserDto, db: Session = Depends(get_db)): #current_use
     if user_repo.get_by_email(dto.email):
         raise HTTPException(status_code=400, detail="Email already registered")
 
+    # Si quieres que los usuarios normales no puedan forzar is_admin=True: (Complementar con el current_user=Depends(get_current_user)) NO IMPLEMENTADO DE MOMENTO PARA LAS PRUEBAS
+    # if not current_user.is_admin:
+    #     dto.is_admin = False  # 🔐 blindaje, un usuario normal no puede autoproclamarse admin ni crear un admin
+
     return use_case.execute(dto)
+
+# Endpoint para crear un usuario admin (solo accesible por admins)
+# Aquí se asume que el usuario que llama a este endpoint es un admin, por lo que no se necesita la validación de is_admin en el DTO
+# @router.post("/admin/users", response_model=UserResponseDto)
+# def create_admin_user(
+#     dto: CreateUserDto,
+#     db: Session = Depends(get_db),
+#     #current_admin=Depends(get_current_admin_user)  # Solo admins entran aquí
+# ):
+#     user_repo = UserRepositoryImpl(db)
+#     use_case = CreateUserUseCase(user_repo)
+
+#     if user_repo.get_by_email(dto.email):
+#         raise HTTPException(status_code=400, detail="Email already registered")
+
+#     return use_case.execute(dto)
 
 
 @router.post("/login", tags=["Auth"])

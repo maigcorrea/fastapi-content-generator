@@ -13,7 +13,7 @@ class UserMapper:
             username=dto.username,
             email=dto.email,
             password=hash_password(dto.password),  # ← ahora se encripta
-            is_admin=False,
+            is_admin=dto.is_admin, # Esto debería ser False para que se meta por defecto, por si alguien desde el json que se envía desde el frontend cuela un true en el is_admin, pero de momento para probar la app y que me deje meter admin desde swagger lo dejo así
             created_at=datetime.utcnow()
         )
 
