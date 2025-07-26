@@ -1,10 +1,13 @@
 'use client';
+import ProtectRoutes from "@/components/ProtectRoutes";
 import Image from "next/image";
 
-export default function Home() {
+export default function Home() { 
   return (
     <>
-      <h1>FRONTEND</h1>
+      {/* <ProtectRoutes adminOnly> // Protege las rutas, solo permite acceso a admins */}
+        <h1>FRONTEND</h1>
+      {/* </ProtectRoutes> */}
     </>
   );
 }

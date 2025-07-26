@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
 type LoginFormData = {
   email: string;
@@ -8,11 +9,19 @@ type LoginFormData = {
 };
 
 export default function LoginForm() {
+  const { token, setToken, isAdmin, setIsAdmin } = useContext(AuthContext);
+
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
+
+    // 🔹 Efecto para ver cuando cambian los valores en el contexto
+  useEffect(() => {
+    console.log("Nuevo valor de isAdmin:", isAdmin);
+    console.log("Nuevo valor de token:", token);
+  }, [isAdmin, token]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,9 +47,16 @@ export default function LoginForm() {
 
       const data = await res.json();
       localStorage.setItem("token", data.access_token); // Guardar el token en localStorage
-      localStorage.setItem("isAdmin", String(data.is_admin)); // Guardar si es admin
+      localStorage.setItem("is_admin", String(data.is_admin)); // Guardar si es admin
       alert("Login exitoso. Token guardado en localStorage.");
       // Aquí podrías redirigir al usuario o actualizar el contexto de auth
+      // Actualizar el contexto de autenticación
+      setToken(data.access_token);
+      setIsAdmin(data.is_admin);
+      
+
+      setFormData({ email: "", password: "" }); // Limpiar el formulario
+      setError(null); // Limpiar errores
     } catch (err: any) {
       setError(err.message);
     }
