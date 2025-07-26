@@ -225,9 +225,11 @@ El contenedor del frontend ejecutará automáticamente npm install y npm run dev
 
 - La protección de endpoints con acceso habilitado a un usuario loggeado y acceso habilitado a un usuario loggeado + tipo administrador (get_current_user y get_current_admin_user en auth_dependencies.py). No se pueden probar de momento ni desde swagger ni desde el frontend para no causar conflictos, pero está activo ya que en swagger aparece el candado identificativo
 
+- La protección de rutas desde el Frontend actualmente se comprueba de forma manual gracias a un contexto y su uso en un componente que envuelve las páginas que componen la aplicación. Pero se prevé una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección actual en un hook reutilizable + Layout con App Router
+
 ## Detalles relevanetes
 
-### 🛡️ Protección de endpoints FastAPI OAuth2 with Password (and hashing), Bearer with JWT tokens
+### **🛡️ Protección de endpoints FastAPI OAuth2 with Password (and hashing), Bearer with JWT tokens**
 El flujo de contraseñas es una de las formas (flujos) definidas en OAuth2 para gestionar la seguridad y la autenticación.
 
 - OAuth2 se diseñó para que el backend o la API fueran independientes del servidor que autentica al usuario.
@@ -426,9 +428,20 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 ✅ Integración directa con Swagger y frontend
 
 
-### 🔐 Sistema de Autenticación y Protección de Rutas (Frontend)
+### **🔐 Sistema de Autenticación y Protección de Rutas (Frontend)**
+**⚠️IMPORTANTE:⚠️** La protección de rutas desde el Frontend actualmente se comprueba de forma manual gracias a un contexto y su uso en un componente que envuelve las páginas que componen la aplicación. Pero se prevé una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección actual en un hook reutilizable + Layout con App Router
+##### Arquitectura General
+```mermaid
+flowchart TD
+  A[Login Form] -->|token & is_admin| B[localStorage]
+  B --> C[AuthContext]
+  C -->|token/isAdmin| D[Navbar & UI]
+  C -->|validación| E[ProtectRoutes]
+  E -->|permiso OK| F[Contenido de la ruta]
+  E -->|permiso denegado| G['/login o /permission']
+```
 
-*1️⃣ Creación del AuthContext*
+**1️⃣ Creación del AuthContext**
 Se creó un contexto de React (AuthContext) para centralizar el estado de autenticación de la aplicación. Este contexto expone las siguientes propiedades:
 
 - token: token de autenticación del usuario.
@@ -457,7 +470,7 @@ useEffect(() => {
 
 ```
 
-*2️⃣ Optimización: inicializar estado desde localStorage*
+**2️⃣ Optimización: inicializar estado desde localStorage**
 Para evitar el uso de useEffect y posibles parpadeos al renderizar, se optimizó la inicialización del estado directamente en el useState, leyendo localStorage de manera perezosa (lazy initialization):
 
 ```
@@ -472,7 +485,7 @@ const [token, setToken] = useState<string>(() => {
 ```
 Con esto, el contexto ya tiene los valores cargados al momento de inicializarse, e isLoading se vuelve opcional.
 
-*3️⃣ Listener de localStorage para sincronización entre pestañas*
+**3️⃣ Listener de localStorage para sincronización entre pestañas**
 Se añadió un listener de eventos storage para detectar cambios en el localStorage hechos desde otras pestañas o ventanas del navegador. Esto permite que el estado de autenticación se sincronice en tiempo real:
 ```
 useEffect(() => {
@@ -500,7 +513,7 @@ useEffect(() => {
   }, []);
 ```
 
-*4️⃣ Actualización del contexto en ciertas partes de la aplicación, por ej el login*
+**4️⃣ Actualización del contexto en ciertas partes de la aplicación, por ej el login**
 En el formulario de login, al autenticarse correctamente, se guardan los datos en localStorage y se actualiza el contexto para que el resto de la aplicación pueda reaccionar en tiempo real (por ejemplo, mostrar el Navbar con el usuario logueado):
 
 ```
@@ -513,7 +526,7 @@ setIsAdmin(data.is_admin);
 ```
 Esto permite que, al hacer login, las rutas protegidas se desbloqueen sin necesidad de recargar la página.
 
-*5️⃣ Componente ProtectRoutes.tsx*
+**5️⃣ Componente ProtectRoutes.tsx**
 Se creó el componente ProtectRoutes para envolver cualquier ruta o sección que deba estar protegida.
 Este componente utiliza el AuthContext para comprobar:
 
@@ -566,47 +579,6 @@ const ProtectRoutes: React.FC<ProtectRoutesProps> = ({ children, adminOnly = fal
 };
 
 ```
-Este componente asegura que:
-
-- Si el usuario no está autenticado, es redirigido al login.
-
-- Si la ruta requiere permisos de administrador y el usuario no lo es, se le redirige a una página de acceso denegado.
-
-- Si todo es correcto, se renderizan los children.
-
-*6️⃣ Flujo completo*
-*1.* Al montar la aplicación, el AuthContext lee el token y el isAdmin directamente desde localStorage.
-
-*2.* Al hacer login, el formulario guarda los datos en localStorage y actualiza el contexto (setToken, setIsAdmin).
-
-*3.* Si hay múltiples pestañas, cualquier cambio en el localStorage (login/logout) se propaga gracias al listener de storage.
-
-*4.* Al navegar por la aplicación, el componente ProtectRoutes se encarga de verificar si el usuario tiene permisos para acceder a la ruta.
-
-*5.* Al hacer logout, se limpia localStorage y se reinicia el contexto, provocando que las rutas protegidas redirijan al login.
-
-#### Beneficios de esta implementación
-- Centralización del estado de autenticación en un solo lugar (AuthContext).
-
-- Sincronización multi-pestaña: login y logout se propagan en tiempo real.
-
-- Rutas protegidas flexibles: puedes proteger cualquier sección con ProtectRoutes, indicando si es solo para admins (adminOnly).
-
-- Sin parpadeos: al inicializar el contexto directamente desde localStorage, evitamos renderizados intermedios incorrectos.
-
-- UI se actualiza automáticamente al login/logout.
-
-##### Arquitectura General
-```mermaid
-flowchart TD
-  A[Login Form] -->|token & is_admin| B[localStorage]
-  B --> C[AuthContext]
-  C -->|token/isAdmin| D[Navbar & UI]
-  C -->|validación| E[ProtectRoutes]
-  E -->|permiso OK| F[Contenido de la ruta]
-  E -->|permiso denegado| G['/login o /permission']
-```
-
 ##### Flujo de validación de ```ProtectRoutes```
 ```mermaid
 flowchart TD
@@ -618,6 +590,16 @@ flowchart TD
   E -->|SÍ| D[Renderiza children]
 
 ```
+
+Este componente asegura que:
+
+- Si el usuario no está autenticado, es redirigido al login.
+
+- Si la ruta requiere permisos de administrador y el usuario no lo es, se le redirige a una página de acceso denegado.
+
+- Si todo es correcto, se renderizan los children.
+
+**6️⃣ Flujo completo**
 
 ##### Flujo de Login y Logout completo
 ```mermaid
@@ -639,6 +621,27 @@ sequenceDiagram
   AuthContext->>UI: Limpia sesión y redirige
 
 ```
+
+**1.** Al montar la aplicación, el AuthContext lee el token y el isAdmin directamente desde localStorage.
+
+**2.** Al hacer login, el formulario guarda los datos en localStorage y actualiza el contexto (setToken, setIsAdmin).
+
+**3.** Si hay múltiples pestañas, cualquier cambio en el localStorage (login/logout) se propaga gracias al listener de storage.
+
+**4.** Al navegar por la aplicación, el componente ProtectRoutes se encarga de verificar si el usuario tiene permisos para acceder a la ruta.
+
+**5.** Al hacer logout, se limpia localStorage y se reinicia el contexto, provocando que las rutas protegidas redirijan al login.
+
+#### Beneficios de esta implementación
+- Centralización del estado de autenticación en un solo lugar (AuthContext).
+
+- Sincronización multi-pestaña: login y logout se propagan en tiempo real.
+
+- Rutas protegidas flexibles: puedes proteger cualquier sección con ProtectRoutes, indicando si es solo para admins (adminOnly).
+
+- Sin parpadeos: al inicializar el contexto directamente desde localStorage, evitamos renderizados intermedios incorrectos.
+
+- UI se actualiza automáticamente al login/logout.
 
 
 ## Autores
