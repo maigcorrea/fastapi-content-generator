@@ -66,6 +66,32 @@ export const AuthProvider = ({ children } : { children: ReactNode }) => { //tipa
   //   setIsLoading(false); // Ya se han cargado los datos
   // }, []);
 
+
+  // Listener para detectar cambios en otras pestañas
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      // Si se cambió el token o is_admin en otra pestaña, actualizamos el contexto
+      if (e.key === "token") {
+        setToken(e.newValue || "");
+      }
+      // Si se cambió is_admin en otra pestaña, actualizamos el contexto
+      if (e.key === "is_admin") {
+        setIsAdmin(e.newValue ? e.newValue === "true" : null);
+      }
+      // Si se borró el localStorage completo (logout)
+      if (e.key === null) {
+        setToken("");
+        setIsAdmin(null);
+      }
+    };
+
+    // Añadimos el listener al evento de storage para detectar cambios en localStorage
+    window.addEventListener("storage", handleStorageChange);
+    // Limpiamos el listener al desmontar el componente
+    // Esto es importante para evitar fugas de memoria y comportamientos inesperados
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   const contextValue = useMemo(() => ({
     isAdmin,
     setIsAdmin,

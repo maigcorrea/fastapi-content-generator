@@ -46,10 +46,12 @@ export default function LoginForm() {
       }
 
       const data = await res.json();
-      localStorage.setItem("token", data.access_token); // Guardar el token en localStorage
-      localStorage.setItem("is_admin", String(data.is_admin)); // Guardar si es admin
+
+      // Guardar datos en localStorage
+      localStorage.setItem("token", data.access_token); 
+      localStorage.setItem("is_admin", String(data.is_admin)); 
       alert("Login exitoso. Token guardado en localStorage.");
-      // Aquí podrías redirigir al usuario o actualizar el contexto de auth
+      
       // Actualizar el contexto de autenticación
       setToken(data.access_token);
       setIsAdmin(data.is_admin);
