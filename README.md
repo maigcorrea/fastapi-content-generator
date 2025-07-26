@@ -141,7 +141,7 @@ cd hashtag-generator
 ```
 ### 2. Crea el archivo .env
 Este archivo contiene las variables sensibles y no está incluido en el repositorio por seguridad.
-✅ También puedes usar un archivo .env.example como plantilla, está disponible en el repositorio.
+✅ También puedes usar el archivo .env.example como plantilla, está disponible en el repositorio.
 
 ```bash
 touch .env
@@ -153,6 +153,13 @@ Añade el siguiente contenido (ajústalo si es necesario):
 POSTGRES_USER=your_postgres_user
 POSTGRES_PASSWORD=your_postgres_password
 POSTGRES_DB=your_database_name
+POSTGRES_HOST=your_postgres_host
+POSTGRES_PORT=5432
+
+# Encriptación de contraseñas y generación de tokens JWT
+SECRET_KEY = "your_secret_key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 ```
 
