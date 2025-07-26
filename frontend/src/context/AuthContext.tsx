@@ -24,9 +24,30 @@ export const AuthContext = createContext<AuthContextType>({
 
 // Provider para envolver la app
 export const AuthProvider = ({ children } : { children: ReactNode }) => { //tipar el prop children para decirle a TypeScript que puede ser cualquier cosa que React permita renderizar (texto, elementos, arrays, fragmentos, etc.)
-  const [isAdmin, setIsAdmin] = useState<boolean|null>(null);
-  const [token, setToken] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isAdmin, setIsAdmin] = useState<boolean|null>(null);
+  // const [token, setToken] = useState('');
+  // const [isLoading, setIsLoading] = useState(true);
+
+  //VERSIÓN OPTIMIZADA: Inicializamos directamente desde localStorage
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(() => {
+    if (typeof window !== "undefined") {
+      const storedAdmin = localStorage.getItem("is_admin");
+      return storedAdmin ? storedAdmin === "true" : null;
+    }
+    return null;
+  });
+
+
+  const [token, setToken] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("token") || "";
+    }
+    return "";
+  });
+
+  // Al cargar los valores desde localStorage ya no necesitamos un useEffect para setearlos
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const logout = () => {
     localStorage.clear();
@@ -34,15 +55,16 @@ export const AuthProvider = ({ children } : { children: ReactNode }) => { //tipa
     setToken('');
   };
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedAdmin = localStorage.getItem('is_admin');
+  // Al cargar los valores desde localStorage ya no necesitamos un useEffect para setearlos
+  // useEffect(() => { // VERSIÓN OPTIMIZADA, POR ESO ESTO NO HACE FALTA
+  //   const storedToken = localStorage.getItem('token');
+  //   const storedAdmin = localStorage.getItem('is_admin');
 
-    if (storedToken) setToken(storedToken);
-    if (storedAdmin) setIsAdmin(storedAdmin === 'true'); // <-- conversión de string a bool, si storedAdmin es "true", isAdmin se guardará como true; si es "false", se guardará como false.
+  //   if (storedToken) setToken(storedToken);
+  //   if (storedAdmin) setIsAdmin(storedAdmin === 'true'); // <-- conversión de string a bool, si storedAdmin es "true", isAdmin se guardará como true; si es "false", se guardará como false.
 
-    setIsLoading(false); // Ya se han cargado los datos
-  }, []);
+  //   setIsLoading(false); // Ya se han cargado los datos
+  // }, []);
 
   const contextValue = useMemo(() => ({
     isAdmin,
