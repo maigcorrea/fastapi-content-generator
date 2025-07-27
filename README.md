@@ -225,7 +225,7 @@ El contenedor del frontend ejecutará automáticamente npm install y npm run dev
 
 - La protección de endpoints con acceso habilitado a un usuario loggeado y acceso habilitado a un usuario loggeado + tipo administrador (get_current_user y get_current_admin_user en auth_dependencies.py). No se pueden probar de momento ni desde swagger ni desde el frontend para no causar conflictos, pero está activo ya que en swagger aparece el candado identificativo
 
-- La protección de rutas desde el Frontend actualmente se comprueba de forma manual gracias a un contexto y su uso en un componente que envuelve las páginas que componen la aplicación. Pero se prevé una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección actual en un hook reutilizable + Layout con App Router (YA IMPLEMENTADO)
+- La protección de rutas desde el Frontend en una versión inicial se comprobaba de forma manual gracias a un contexto y su uso en un componente que envolvía las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección en un hook reutilizable + Layout con App Router (Consultar más abajo)
 
 ## Detalles relevanetes
 
@@ -429,7 +429,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 
 
 ### **🔐 Sistema de Autenticación y Protección de Rutas (Frontend)**
-**⚠️IMPORTANTE:⚠️** La protección de rutas desde el Frontend en una versión anterior se comprobaba de forma manual gracias a un contexto y su uso en un componente que envuelve las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección actual en un hook reutilizable + Layout con App Router
+**⚠️IMPORTANTE:⚠️** La protección de rutas desde el Frontend en una versión anterior se comprobaba de forma manual gracias a un contexto y su uso en un componente que envuelve las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección actual en un hook reutilizable + Layout con App Router
 ##### Arquitectura General
 ```mermaid
 flowchart TD
