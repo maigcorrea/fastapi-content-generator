@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useContext, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import { AuthContext } from "@/context/AuthContext";
 
 type LoginFormData = {
@@ -9,6 +10,7 @@ type LoginFormData = {
 };
 
 export default function LoginForm() {
+  const router = useRouter();
   const { token, setToken, isAdmin, setIsAdmin } = useContext(AuthContext);
 
   const [formData, setFormData] = useState<LoginFormData>({
@@ -59,6 +61,14 @@ export default function LoginForm() {
 
       setFormData({ email: "", password: "" }); // Limpiar el formulario
       setError(null); // Limpiar errores
+
+      if(data.is_admin) {
+        // Redirigir a la página de administración si es admin
+        router.push("/admin-panel");
+      } else {
+        // Redirigir a la página principal si no es admin
+        router.push("/dashboard");
+      }
     } catch (err: any) {
       setError(err.message);
     }
