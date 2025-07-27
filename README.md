@@ -428,15 +428,28 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 ✅ Integración directa con Swagger y frontend
 
 
-### **🔐 Sistema de Autenticación y Protección de Rutas (Frontend)**
-**⚠️IMPORTANTE:⚠️** La protección de rutas desde el Frontend en una versión anterior se comprobaba de forma manual gracias a un contexto y su uso en un componente que envuelve las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección actual en un hook reutilizable + Layout con App Router
-##### Arquitectura General
+### **🔐 Sistema de Autenticación y Protección de Rutas (Frontend) con context + hook + Layout**
+**⚠️IMPORTANTE:⚠️** La protección de rutas desde el Frontend en una versión anterior se comprobaba de forma manual gracias a un contexto y su uso en un componente que envuelve las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección actual en un hook reutilizable + Layout con App Router (Estándar en Nextjs)
+
+#### Arquitectura General
+```
+<App (Next.js)>
+   └── RootLayout (app/layout.tsx)
+         └── <AuthProvider> (AuthContext)
+               ├── (públicas) login/, permission/, page.tsx
+               ├── (private)/layout.tsx  -> usa useAuthGuard(false)
+               │       ├── dashboard/page.tsx
+               │       └── profile/page.tsx
+               └── (admin)/layout.tsx   -> usa useAuthGuard(true)
+                       └── admin-panel/page.tsx
+
+```
+
 ```mermaid
-flowchart TD
   A[Login Form] -->|token & is_admin| B[localStorage]
   B --> C[AuthContext]
   C -->|token/isAdmin| D[Navbar & UI]
-  C -->|validación| E[ProtectRoutes]
+  C -->|validación| E[Layouts protegidos]
   E -->|permiso OK| F[Contenido de la ruta]
   E -->|permiso denegado| G['/login o /permission']
 ```
@@ -526,61 +539,101 @@ setIsAdmin(data.is_admin);
 ```
 Esto permite que, al hacer login, las rutas protegidas se desbloqueen sin necesidad de recargar la página.
 
-**5️⃣ Componente ProtectRoutes.tsx**
-Se creó el componente ProtectRoutes para envolver cualquier ruta o sección que deba estar protegida.
-Este componente utiliza el AuthContext para comprobar:
+**5️⃣ Hook useAuthGuard**
+Centralizamos la lógica de protección en un hook reutilizable:
+```ts
+'use client';
 
-- Si el usuario está logueado (token).
+import { useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { AuthContext } from '@/context/AuthContext';
 
-- Si la ruta es solo para administradores (adminOnly) y el usuario tiene permisos (isAdmin).
-
-*Ejemplo de uso:*
-```
-<ProtectRoutes adminOnly>
-  <AdminDashboard />
-</ProtectRoutes>
-
-```
-```
-<ProtectRoutes>
-  <ProfilePanel />
-</ProtectRoutes>
-
-```
-
-*Código simplificado de ProtectRoutes:*
-```
-const ProtectRoutes: React.FC<ProtectRoutesProps> = ({ children, adminOnly = false }) => {
+export function useAuthGuard(adminOnly = false) {
+  const { token, isAdmin, isLoading } = useContext(AuthContext);
   const router = useRouter();
-  const { token, isAdmin } = useContext(AuthContext);
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [authorized, setAuthorized] = useState(false);
 
-  //Efecto para comprobar permisos cuando cambian los valores del contexto
   useEffect(() => {
+    // Si todavía se está cargando el contexto, no hacemos nada
+    if (isLoading) return;
+
     // Si no hay token -> login
     if (!token) {
-      router.push("/login");
+      router.push('/login');
       return;
     }
 
-    // Si la ruta requiere admin y el usuario no lo es -> permission denied
+    // Si la ruta requiere admin y el usuario no lo es -> acceso denegado
     if (adminOnly && !isAdmin) {
-      router.push("/permission");
+      router.push('/permission');
       return;
     }
 
-    // Si todo bien -> autorizado
-    setIsAuthorized(true);
-  }, [token, isAdmin, adminOnly, router]);
+    // Si todo OK -> autorizado
+    setAuthorized(true);
+  }, [token, isAdmin, isLoading, adminOnly, router]);
 
-  if (!isAuthorized) return null;
-
-  return <>{children}</>;
-};
+  return { authorized, isLoading };
+}
 
 ```
-##### Flujo de validación de ```ProtectRoutes```
-```mermaid
+#### Ventajas del hook:
+- Se puede usar tanto en Layouts como en componentes concretos (ej: un botón o sección de UI).
+
+- Toda la lógica de redirección y validación está centralizada.
+
+- Si quieres proteger un componente dentro de una página, puedes usar directamente el hook:
+```
+const { authorized } = useAuthGuard(true); // solo admins
+
+if (!authorized) return null;
+
+return <button>Eliminar usuarios</button>;
+
+```
+
+**6️⃣ Implementación con Layouts protegidos (Next.js App Router)**
+En vez de envolver cada página con <ProtectRoutes>, ahora protegemos grupos de rutas con layouts.
+
+#### Estructura general
+```
+app/
+├─ layout.tsx                 Layout global de toda la app
+├─ page.tsx                   Página pública (ej: Home)
+│
+├─ login/
+│   └─ page.tsx               Página pública de login
+│
+├─ permission/
+│   └─ page.tsx               Página de "Acceso denegado"
+│
+├─ (private)/                 Grupo de rutas privadas (cualquier usuario logueado)
+│   ├─ layout.tsx             Layout con useAuthGuard(false)
+│   ├─ dashboard/
+│   │   └─ page.tsx           Panel privado (cualquier usuario)
+│   ├─ profile/
+│   │   └─ page.tsx           Perfil del usuario
+│   └─ tasks/
+│       └─ page.tsx           Otra ruta privada
+│
+├─ (admin)/                   Grupo de rutas solo para admins
+│   ├─ layout.tsx             Layout con useAuthGuard(true)
+│   └─ admin-panel/
+│       └─ page.tsx           Panel exclusivo de admins
+
+```
+#### ¿Cómo funcionan los grupos (private) y (admin)?
+- (private)
+  - Todas las páginas dentro de esa carpeta comparten el layout.tsx de (private)
+  - Ese layout usa useAuthGuard(false) → solo requiere que el usuario esté logueado.
+
+
+- (admin)
+  - Todas las páginas dentro de esa carpeta comparten el layout.tsx de (admin)
+  - Ese layout usa useAuthGuard(true) → requiere ser admin
+
+#### Flujo de validación de los layouts
+```
 flowchart TD
   A[Token existe?] -->|NO| B[redirige /login]
   A -->|SÍ| C[¿adminOnly?]
@@ -591,55 +644,106 @@ flowchart TD
 
 ```
 
-Este componente asegura que:
+*Layout para rutas privadas:*
+```tsx
+'use client';
 
-- Si el usuario no está autenticado, es redirigido al login.
+import { ReactNode } from 'react';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
 
-- Si la ruta requiere permisos de administrador y el usuario no lo es, se le redirige a una página de acceso denegado.
+export default function PrivateLayout({ children }: { children: ReactNode }) {
+  const { authorized, isLoading } = useAuthGuard(false); // false = cualquier usuario logueado
 
-- Si todo es correcto, se renderizan los children.
+  if (isLoading || !authorized) return null;
 
-**6️⃣ Flujo completo**
+  return <>{children}</>;
+}
 
-##### Flujo de Login y Logout completo
+```
+
+*Layout para rutas a las que sólo el admin puede acceder:*
+```tsx
+'use client';
+
+import { ReactNode } from 'react';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+
+export default function AdminLayout({ children }: { children: ReactNode }) {
+  const { authorized, isLoading } = useAuthGuard(true); // true = solo admins
+
+  if (isLoading || !authorized) return null;
+
+  return <>{children}</>;
+}
+
+```
+#### ¿Qué se consigue?
+- Todas las páginas dentro de (private) requieren estar logueado.
+
+- Todas las páginas dentro de (admin) requieren además ser admin.
+
+- Ya no hay que envolver nada manualmente, el layout se aplica automáticamente.
+
+
+#### FLUJOS DE NAVEGACIÓN
+
+##### Flujo completo (Login -> Rutas protegidas -> logout)
 ```mermaid
 sequenceDiagram
   participant User
   participant LoginForm
   participant AuthContext
-  participant ProtectRoutes
-  participant UI
+  participant useAuthGuard
+  participant Layouts
 
   User->>LoginForm: Ingresa credenciales
   LoginForm->>localStorage: Guarda token & is_admin
   LoginForm->>AuthContext: setToken() & setIsAdmin()
-  AuthContext->>UI: Notifica cambio de estado
-  UI->>ProtectRoutes: Verifica permisos
-  ProtectRoutes->>UI: Renderiza rutas permitidas
+  AuthContext->>Layouts: Contexto actualizado
+  Layouts->>useAuthGuard: Verifica permisos
+  useAuthGuard->>Layouts: Permiso OK o redirección
+  Layouts->>UI: Renderiza children permitidos
   User->>AuthContext: logout()
   AuthContext->>localStorage: clear()
-  AuthContext->>UI: Limpia sesión y redirige
+  Layouts->>useAuthGuard: Revalida -> redirige a login
 
 ```
+```mermaid
+flowchart TD
+    A[Usuario entra a /dashboard] --> B{token existe?}
+    B -- No --> C[Redirigir a /login]
+    C --> D[Usuario hace login]
+    D --> E[Guardar token e isAdmin en AuthContext y localStorage]
+    E --> F[Usuario navega a /dashboard]
+    F --> G{token existe?}
+    G -- Sí --> H[Renderizar Dashboard]
 
-**1.** Al montar la aplicación, el AuthContext lee el token y el isAdmin directamente desde localStorage.
+    H --> I[Usuario navega a /admin-panel]
+    I --> J{isAdmin = true?}
+    J -- No --> K[Redirigir a /permission]
+    J -- Sí --> L[Renderizar Admin Panel]
 
-**2.** Al hacer login, el formulario guarda los datos en localStorage y actualiza el contexto (setToken, setIsAdmin).
+    L --> M[Usuario hace logout]
+    M --> N[Limpiar AuthContext y localStorage]
+    N --> C
 
-**3.** Si hay múltiples pestañas, cualquier cambio en el localStorage (login/logout) se propaga gracias al listener de storage.
+```
+- No hay que poner lógica en cada página.
+- Todo depende de ```token``` e ```isAdmin``` en el ```AuthContext```.
 
-**4.** Al navegar por la aplicación, el componente ProtectRoutes se encarga de verificar si el usuario tiene permisos para acceder a la ruta.
 
-**5.** Al hacer logout, se limpia localStorage y se reinicia el contexto, provocando que las rutas protegidas redirijan al login.
+
 
 #### Beneficios de esta implementación
-- Centralización del estado de autenticación en un solo lugar (AuthContext).
+- Centralización del estado de autenticación en un solo lugar (```AuthContext```).
 
 - Sincronización multi-pestaña: login y logout se propagan en tiempo real.
 
-- Rutas protegidas flexibles: puedes proteger cualquier sección con ProtectRoutes, indicando si es solo para admins (adminOnly).
-
 - Sin parpadeos: al inicializar el contexto directamente desde localStorage, evitamos renderizados intermedios incorrectos.
+
+- Protección de grupos completos de rutas con los Layouts del App Router. 
+
+- Se siguen podiendo proteger componentes individuales gracias al hook useAuthGuard.
 
 - UI se actualiza automáticamente al login/logout.
 
