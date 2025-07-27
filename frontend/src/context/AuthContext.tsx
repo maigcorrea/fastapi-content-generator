@@ -46,6 +46,7 @@ export const AuthProvider = ({ children } : { children: ReactNode }) => { //tipa
   });
 
   // Al cargar los valores desde localStorage ya no necesitamos un useEffect para setearlos
+  // AuthContext ya inicializa el estado desde localStorage, así que isLoading ahora solo sirve si más adelante haces validaciones asíncronas (ej. verificar el token en el servidor).
   const [isLoading, setIsLoading] = useState(false);
 
 
