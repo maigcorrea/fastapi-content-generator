@@ -3,6 +3,20 @@
 Este proyecto es una API de generación de hashtags a partir de imágenes, construida con **FastAPI**, **PostgreSQL**, **Docker** y con estructura de **arquitectura hexagonal (Clean Architecture)**.
 Proyecto para aprender Python orientado a IA + web + arquitectura limpia
 
+## Índice
+- [Idea resumida como MVP](#-idea-resumida-como-mvp)
+- [Tecnologías usadas](#-tecnologías-usadas)
+- [Tecnologías sugeridas por capa](#-tecnologías-sugeridas-por-capa)
+- [Estructura de carpetas hexagonal con FastAPI](#-estructura-de-carpetas-hexagonal-en-python-inspirada-en-tu-backend-nestjs)
+- [Equivalencia de carpetas de FastAPI con Nestjs](#-equivalencias-con-nestjs)
+- [Fases del proyecto](#-fases-del-proyecto)
+- [Guía de despliegue local con y sin Docker](#-guía-de-despliegue-local---hashtag-generator-api)
+- [A tener en cuenta](#-notas-adicionales)
+- [Detalles relevantes del proceso de construcción de la App](#detalles-relevantes)
+  - [Protección de backend con OAuth2 + JWT](#️-protección-de-endpoints-fastapi-oauth2-with-password-and-hashing-bearer-with-jwt-tokens)
+  - [Sistema de Autenticación y Protección de Rutas (Frontend) con context + hook + Layout](#-sistema-de-autenticación-y-protección-de-rutas-frontend-con-context--hook--layout)
+- [Licencias y autores](#autores) 
+
 ## ✅ Idea resumida como MVP
 - Login / Registro de usuarios
 
@@ -227,7 +241,7 @@ El contenedor del frontend ejecutará automáticamente npm install y npm run dev
 
 - La protección de rutas desde el Frontend en una versión inicial se comprobaba de forma manual gracias a un contexto y su uso en un componente que envolvía las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección en un hook reutilizable + Layout con App Router (Consultar más abajo)
 
-## Detalles relevanetes
+## Detalles relevantes
 
 ### **🛡️ Protección de endpoints FastAPI OAuth2 with Password (and hashing), Bearer with JWT tokens**
 El flujo de contraseñas es una de las formas (flujos) definidas en OAuth2 para gestionar la seguridad y la autenticación.
