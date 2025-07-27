@@ -446,6 +446,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
 ```
 
 ```mermaid
+flowchart TD
   A[Login Form] -->|token & is_admin| B[localStorage]
   B --> C[AuthContext]
   C -->|token/isAdmin| D[Navbar & UI]
