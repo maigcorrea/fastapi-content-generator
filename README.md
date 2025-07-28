@@ -216,7 +216,7 @@ Esto iniciará:
 
 🧩 Frontend en → http://localhost:3000
 
-El contenedor del frontend ejecutará automáticamente npm install y npm run dev, así que no necesitas hacer nada más desde la terminal.
+El contenedor del frontend ejecutará automáticamente **```npm install```** y **```npm run dev```**, así que **no** necesitas hacer nada más desde la terminal.
 
 ## 🧪 Endpoints disponibles (API REST)
 📍 GET / → http://localhost:8000 - Verifica que la API está corriendo
