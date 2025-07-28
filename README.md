@@ -53,7 +53,7 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
 ## 🧠 Tecnologías sugeridas por capa
 | Capa | Tecnología     |
 | :-------- | :------- | 
-| `Interfaz`      | `FastAPI (backend API REST) + React (opcional)` |
+| `Interfaz`      | `FastAPI (backend API REST) + NextJs (opcional)` |
 | `Infraestructura`      | `SQLAlchemy / Tortoise ORM, PostgreSQL, Docker, JWT` |
 | `Aplicación`      | `Casos de uso, DTOs (puros Python)` | 
 | `Dominio`      | `Entidades puras, sin dependencias` | 
@@ -113,7 +113,7 @@ En NestJS sueles agrupar por dominio funcional, aquí en Python preferimos agrup
 
 ## 🧩 Fases del proyecto
 ### 🟩 Fase 1: Login, registro, panel básico
-- Usuarios con login/registro (JWT con `python-jose[cryptography]` y `passlib[bcrypt]`)
+- Usuarios con login/registro (JWT con `python-jose[cryptography]` y `passlib[bcrypt] + OAuth2`)
 
 - PostgreSQL como base de datos
 
