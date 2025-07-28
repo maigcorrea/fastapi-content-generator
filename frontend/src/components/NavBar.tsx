@@ -11,7 +11,7 @@ export default function Navbar() {
   const router = useRouter();
 
   return (
-    <nav className="flex justify-between items-center bg-gray-800 text-white p-4">
+    <nav className="flex justify-between items-center bg-gray-800 text-white p-4 z-10 fixed top-0 w-full">
       <h1 className="text-lg font-bold">Mi App</h1>
 
       {token ? (
