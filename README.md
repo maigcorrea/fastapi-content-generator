@@ -13,7 +13,8 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
 - [Guía de despliegue local con y sin Docker](#-guía-de-despliegue-local---hashtag-generator-api)
 - [A tener en cuenta](#-notas-adicionales)
 - [Detalles relevantes del proceso de construcción de la App](#detalles-relevantes)
-  - [Protección de backend con OAuth2 + JWT](#️-protección-de-endpoints-fastapi-oauth2-with-password-and-hashing-bearer-with-jwt-tokens)
+  - [Protección de backend con OAuth2 + JWT (Versión antigua)](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección_endpoints_backend_OAuth2(V_antigua).md)
+  - [Protección de backend con Bearer + JWT (Versión actual)](#️-protección-de-endpoints-fastapi-con-bearer--jwt-tokens-httpbearer)
   - [Sistema de Autenticación y Protección de Rutas (Frontend) con context + hook + Layout](#-sistema-de-autenticación-y-protección-de-rutas-frontend-con-context--hook--layout)
 - [Licencias y autores](#autores) 
 
@@ -238,37 +239,37 @@ El contenedor del frontend ejecutará automáticamente **```npm install```** y *
 
 - Este proyecto está estructurado para escalar en el futuro.
 
-- La protección de endpoints con acceso habilitado a un usuario loggeado y acceso habilitado a un usuario loggeado + tipo administrador (get_current_user y get_current_admin_user en auth_dependencies.py). No se pueden probar de momento ni desde swagger ni desde el frontend para no causar conflictos, pero está activo ya que en swagger aparece el candado identificativo
+- La protección de endpoints con acceso habilitado a un usuario loggeado y acceso habilitado a un usuario loggeado + tipo administrador (get_current_user y get_current_admin_user en auth_dependencies.py) en una versión antigua se realizaba con **OAuth2 with Password (and hashing), Bearer with JWT tokens**  [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección_endpoints_backend_OAuth2(V_antigua).md). Sin embargo, debido al flujo de la aplicación, puesto que el token JWT se genera directamente en el momento de inicio de sesión, se ha decidido actualizar a una nueva versión con Bearer(HTTPBearer) + JWT (Consultar más abajo)
 
 - La protección de rutas desde el Frontend en una versión inicial se comprobaba de forma manual gracias a un contexto y su uso en un componente que envolvía las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección en un hook reutilizable + Layout con App Router (Consultar más abajo)
 
 ## Detalles relevantes
 
-### **🛡️ Protección de endpoints FastAPI OAuth2 with Password (and hashing), Bearer with JWT tokens**
-El flujo de contraseñas es una de las formas (flujos) definidas en OAuth2 para gestionar la seguridad y la autenticación.
+### **🛡️ Protección de endpoints FastAPI con Bearer + JWT tokens (HTTPBearer)**
+El flujo de autenticación está basado en tokens JWT que se envían en la cabecera Authorization usando el esquema Bearer.
 
-- OAuth2 se diseñó para que el backend o la API fueran independientes del servidor que autentica al usuario.
+- La aplicación FastAPI se encarga tanto de la API como de la autenticación.
 
-- Pero en este caso, la misma aplicación FastAPI gestionará la API y la autenticación.
+- Cada vez que el frontend necesita acceder a un endpoint protegido, debe incluir el token JWT.
 
 🔎 Revisémoslo desde esta perspectiva simplificada:
 
 - El usuario escribe el nombre de usuario y la contraseña en el frontend y pulsa Intro.
-- El frontend (que se ejecuta en el navegador del usuario) envía ese nombre de usuario y contraseña a una URL específica en nuestra API (declarada con tokenUrl="token").
+- El frontend (que se ejecuta en el navegador del usuario) envía ese nombre de usuario y contraseña al endpoint /users/login de la API.
 - La API comprueba ese nombre de usuario y contraseña y responde con un token JWT.
-- El frontend almacena ese token JWT temporalmente en algún lugar.
+- El frontend almacena ese token JWT temporalmente en algún lugar (localStorage en este caso).
 - El usuario hace clic en el frontend para ir a otra sección de la aplicación web frontend.
 - El frontend necesita obtener más datos de la API.
-- Pero necesita autenticación para ese endpoint específico. Para autenticarse con nuestra API, se envía un encabezado "Autorización" con el valor "Bearer" más el token.
+- Pero necesita autenticación para ese endpoint específico. Para autenticarse con nuestra API, se envía un encabezado "Autorización" con el valor "Bearer" más el token ```Bearer <token>```.
 - Si el token contiene "foobar", el contenido del encabezado "Autorización" sería: "Bearer foobar".
 
 **🔄 Flujo resumido**
 El frontend envía usuario/contraseña → obtiene token JWT → lo usa en futuras peticiones.
 
-### 🔐 Flujo de autenticación con OAuth2 + Con flujo Password JWT en FastAPI (implementación real)
+### 🔐 Flujo de autenticación con HTTPBearer + JWT en FastAPI (implementación real)
 **1. Generación del token JWT🔑**
 
-En el endpoint ``` /users/login ``` después de validar las credenciales con ```pwd_context.verify()```, se genera un token JWT que incluye el user_id como sub:
+En el endpoint ``` /users/login ``` después de validar las credenciales con ```pwd_context.verify()```, se genera un token JWT que incluye el ```user_id``` como ```sub```:
 
 ```python
 jwt.encode({"sub": str(user.id)}, SECRET_KEY, algorithm=ALGORITHM)
@@ -320,7 +321,7 @@ Authorization: Bearer <token>
 ```
 
 **3. Validación de endpoints con dependencia get_current_user🧐**
-- Extrae el token de la cabecera ```Authorization: Bearer <token>``` con ```OAuth2PasswordBearer```
+- Extrae el token de la cabecera ```Authorization: Bearer <token>``` con ```HTTPBearer```
 
 - Decodifica el JWT
 
@@ -333,7 +334,7 @@ Authorization: Bearer <token>
 - Si todo está bien, devuelve el ```current_user```
 
 ```python
-def get_current_user(token: str = Depends(oauth2_scheme), ...):
+def get_current_user(token: str = Depends(bearer_scheme), ...):
     ...
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     ...
@@ -341,10 +342,14 @@ def get_current_user(token: str = Depends(oauth2_scheme), ...):
 
 Código completo:
 ```python
+bearer_scheme = HTTPBearer()
+
 def get_current_user(
-    token: str = Depends(oauth2_scheme),
+    credentials = Depends(bearer_scheme),
     user_repo: UserRepository = Depends(get_user_repository)
 ):
+    token = credentials.credentials
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -418,29 +423,29 @@ La implementación se basa en una arquitectura por capas:
 - .env: contiene SECRET_KEY, ALGORITHM y ACCESS_TOKEN_EXPIRE_MINUTES
 
 #### 🔑 Autenticación en Swagger
-Gracias a ```OAuth2PasswordBearer(tokenUrl="/users/login")```, FastAPI añade **automáticamente** un botón “Authorize” en la documentación Swagger para probar autenticación con token Bearer.
+Gracias a ```HTTPBearer```, FastAPI añade **automáticamente** un botón “Authorize” en la documentación Swagger para probar autenticación con token Bearer.
 
 ```python
 #En las dependencias
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/login")
+bearer_scheme = HTTPBearer()
 ```
 
 - Haz clic en "Authorize"
 
-- Introduce usuario y contraseña
+- Introduce el token JWT en el campo
 
-- FastAPI obtendrá el token y lo usará en los headers automáticamente en los endpoints protegidos
+- FastAPI usará el token en los headers automáticamente en los endpoints protegidos
 
 (Adjuntar imagen de swagger)
 
 #### ✅ Resultado
 ✅ Token seguro con expiración (exp)
 
-✅ Verificación automática en cada endpoint con Depends
+✅ Verificación automática en cada endpoint con ```Depends```
 
 ✅ Protección opcional para administradores
 
-✅ Integración directa con Swagger y frontend
+✅ Integración directa con Swagger y frontend (solo pegar el token)
 
 
 ### **🔐 Sistema de Autenticación y Protección de Rutas (Frontend) con context + hook + Layout**

@@ -16,13 +16,13 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecret")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
-oauth2_scheme = HTTPBearer()
+bearer_scheme = HTTPBearer()
 
 def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
     return UserRepositoryImpl(db)
 
 def get_current_user(
-    credentials=Depends(oauth2_scheme),
+    credentials=Depends(bearer_scheme),
     user_repo: UserRepository = Depends(get_user_repository)
 ):
     # Credentials es un objeto que contiene el token JWT
