@@ -47,6 +47,7 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
 - Uvicorn
 - WSL (Ubuntu) en Windows (opcional pero recomendado)
 - Arquitectura hexagonal
+- NextJs
 
 
 ## 🧠 Tecnologías sugeridas por capa
