@@ -13,7 +13,7 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
 - [Guía de despliegue local con y sin Docker](#-guía-de-despliegue-local---hashtag-generator-api)
 - [A tener en cuenta](#-notas-adicionales)
 - [Detalles relevantes del proceso de construcción de la App](#detalles-relevantes)
-  - [Protección de backend con OAuth2 + JWT (Versión antigua)](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección_endpoints_backend_OAuth2(V_antigua).md)
+  - [Protección de backend con OAuth2 + JWT (Versión antigua)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/protección_endpoints_backend_OAuth2(V_antigua).md)
   - [Protección de backend con Bearer + JWT (Versión actual)](#️-protección-de-endpoints-fastapi-con-bearer--jwt-tokens-httpbearer)
   - [Sistema de Autenticación y Protección de Rutas (Frontend) con context + hook + Layout](#-sistema-de-autenticación-y-protección-de-rutas-frontend-con-context--hook--layout)
 - [Licencias y autores](#autores) 
@@ -141,7 +141,7 @@ En NestJS sueles agrupar por dominio funcional, aquí en Python preferimos agrup
 
 - Estadísticas simples
 
-# 🚀 Guía de despliegue local - Hashtag Generator API
+# 🚀 Guía de despliegue local - Content Generator API
 
 Esta guía te permitirá clonar y desplegar este proyecto siguiendo arquitectura hexagonal usando Docker y FastAPI.
 
@@ -151,8 +151,8 @@ Esta guía te permitirá clonar y desplegar este proyecto siguiendo arquitectura
 ### 1. Clona el repositorio (preferentemente dentro de WSL si usas Windows)
 
 ```bash
-git clone https://github.com/tu-usuario/hashtag-generator.git
-cd hashtag-generator
+git clone https://github.com/tu-usuario/fastapi-content-generator.git
+cd fastapi-content-generator
 
 ```
 ### 2. Crea el archivo .env
@@ -239,9 +239,9 @@ El contenedor del frontend ejecutará automáticamente **```npm install```** y *
 
 - Este proyecto está estructurado para escalar en el futuro.
 
-- La protección de endpoints con acceso habilitado a un usuario loggeado y acceso habilitado a un usuario loggeado + tipo administrador (get_current_user y get_current_admin_user en auth_dependencies.py) en una versión antigua se realizaba con **OAuth2 with Password (and hashing), Bearer with JWT tokens**  [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección_endpoints_backend_OAuth2(V_antigua).md). Sin embargo, debido al flujo de la aplicación, puesto que el token JWT se genera directamente en el momento de inicio de sesión, se ha decidido actualizar a una nueva versión con Bearer(HTTPBearer) + JWT (Consultar más abajo)
+- La protección de endpoints con acceso habilitado a un usuario loggeado y acceso habilitado a un usuario loggeado + tipo administrador (get_current_user y get_current_admin_user en auth_dependencies.py) en una versión antigua se realizaba con **OAuth2 with Password (and hashing), Bearer with JWT tokens**  [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/protección_endpoints_backend_OAuth2(V_antigua).md). Sin embargo, debido al flujo de la aplicación, puesto que el token JWT se genera directamente en el momento de inicio de sesión, se ha decidido actualizar a una nueva versión con Bearer(HTTPBearer) + JWT (Consultar más abajo)
 
-- La protección de rutas desde el Frontend en una versión inicial se comprobaba de forma manual gracias a un contexto y su uso en un componente que envolvía las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-hashtag-generator/blob/main/docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección en un hook reutilizable + Layout con App Router (Consultar más abajo)
+- La protección de rutas desde el Frontend en una versión inicial se comprobaba de forma manual gracias a un contexto y su uso en un componente que envolvía las páginas que componen la aplicación [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/protección-rutas-manual(Antigua).md). Pero se ha realizado una actualización con una versión híbrida basada en el encapsulamiento de la lógica de protección en un hook reutilizable + Layout con App Router (Consultar más abajo)
 
 ## Detalles relevantes
 
