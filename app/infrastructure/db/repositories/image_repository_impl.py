@@ -34,3 +34,11 @@ class ImageRepositoryImpl(ImageRepository):
         if image_model:
             self.db.delete(image_model)
             self.db.commit()
+
+    def list_by_user_id(self, user_id: UUID) -> List[Image]:
+        """Devuelve todas las imágenes asociadas a un usuario."""
+        # Filtra las imágenes por el ID del usuario y las devuelve como una lista de entidades.
+        models = self.db.query(ImageModel).filter(ImageModel.user_id == user_id).all() # Devuelve todos los modelos de imagen asociados al usuario
+        
+        # Utiliza el mapper para convertir los modelos a entidades de dominio.
+        return [ImageMapper.to_entity(model) for model in models] # Devuelve una lista de entidades Image a partir de los modelos obtenidos

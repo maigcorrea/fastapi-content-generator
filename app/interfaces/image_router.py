@@ -1,6 +1,7 @@
 import os
 import shutil
 from uuid import uuid4
+from typing import List
 from fastapi import APIRouter, UploadFile, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -13,6 +14,7 @@ from infrastructure.auth.auth_dependencies import get_current_user
 
 # Casos de uso
 from application.use_cases.image_use_cases.upload_image_use_case import UploadImageUseCase
+from application.use_cases.image_use_cases.list_user_images_use_case import ListUserImagesUseCase
 
 
 router = APIRouter(prefix="/images", tags=["Images"])
@@ -53,3 +55,14 @@ def upload_image(
 
     # 4. Transformar a DTO de respuesta y devolver
     return ImageMapper.to_response_dto(image_entity)
+
+
+@router.get("/me", response_model=List[ImageResponseDTO])
+def list_my_images(
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    repo = ImageRepositoryImpl(db)
+    use_case = ListUserImagesUseCase(repo)
+    images = use_case.execute(current_user.id)
+    return [ImageMapper.to_response_dto(image) for image in images]

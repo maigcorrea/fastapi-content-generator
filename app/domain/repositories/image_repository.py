@@ -27,3 +27,8 @@ class ImageRepository(ABC):
     def delete(self, image_id: UUID) -> None:
         """Elimina una imagen"""
         pass
+
+    @abstractmethod
+    def list_by_user_id(self, user_id: UUID) -> List[Image]: # Devuelve una lista de imágenes asociadas a un usuario
+        """Devuelve todas las imágenes asociadas a un usuario."""
+        pass
