@@ -1,6 +1,7 @@
 import uuid
 from sqlalchemy import Column, String, Boolean, DateTime
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import relationship
 from datetime import datetime
 
 from infrastructure.db.db_config import Base
@@ -14,3 +15,4 @@ class UserModel(Base):
     password = Column(String(255), nullable=False)
     is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    images = relationship("ImageModel", back_populates="user", cascade="all, delete-orphan")
