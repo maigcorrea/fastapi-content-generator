@@ -1,4 +1,4 @@
-# HastagsGenerator
+# Content Generator
 
 Este proyecto es una API de generación de hashtags a partir de imágenes, construida con **FastAPI**, **PostgreSQL**, **Docker** y con estructura de **arquitectura hexagonal (Clean Architecture)**.
 Proyecto para aprender Python orientado a IA + web + arquitectura limpia
