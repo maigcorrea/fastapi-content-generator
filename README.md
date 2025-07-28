@@ -13,7 +13,7 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
 - [Guía de despliegue local con y sin Docker](#-guía-de-despliegue-local---hashtag-generator-api)
 - [A tener en cuenta](#-notas-adicionales)
 - [Detalles relevantes del proceso de construcción de la App](#detalles-relevantes)
-  - [Protección de backend con OAuth2 + JWT (Versión antigua)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/protección_endpoints_backend_OAuth2(V_antigua).md)
+  - [Protección de backend con OAuth2 + JWT (Versión antigua)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/protección_endpoints_backend_OAuth2(Antigua).md)
   - [Protección de backend con Bearer + JWT (Versión actual)](#️-protección-de-endpoints-fastapi-con-bearer--jwt-tokens-httpbearer)
   - [Sistema de Autenticación y Protección de Rutas (Frontend) con context + hook + Layout](#-sistema-de-autenticación-y-protección-de-rutas-frontend-con-context--hook--layout)
 - [Licencias y autores](#autores) 
@@ -246,6 +246,8 @@ El contenedor del frontend ejecutará automáticamente **```npm install```** y *
 ## Detalles relevantes
 
 ### **🛡️ Protección de endpoints FastAPI con Bearer + JWT tokens (HTTPBearer)**
+La protección de endpoints en una versión antigua se realizaba con **OAuth2 with Password (and hashing), Bearer with JWT tokens**  [Pincha aquí para saber su funcionamiento](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/protección_endpoints_backend_OAuth2(V_antigua).md). Sin embargo, debido al flujo de la aplicación, puesto que el token JWT se genera directamente en el momento de inicio de sesión, se ha decidido actualizar a una nueva versión con Bearer(HTTPBearer) + JWT.
+
 El flujo de autenticación está basado en tokens JWT que se envían en la cabecera Authorization usando el esquema Bearer.
 
 - La aplicación FastAPI se encarga tanto de la API como de la autenticación.
