@@ -649,7 +649,7 @@ app/
   - Ese layout usa useAuthGuard(true) → requiere ser admin
 
 #### Flujo de validación de los layouts
-```
+```mermaid
 flowchart TD
   A[Token existe?] -->|NO| B[redirige /login]
   A -->|SÍ| C[¿adminOnly?]
