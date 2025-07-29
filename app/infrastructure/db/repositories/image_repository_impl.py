@@ -42,3 +42,11 @@ class ImageRepositoryImpl(ImageRepository):
         
         # Utiliza el mapper para convertir los modelos a entidades de dominio.
         return [ImageMapper.to_entity(model) for model in models] # Devuelve una lista de entidades Image a partir de los modelos obtenidos
+
+    def get_by_id(self, image_id: UUID) -> Optional[Image]:    
+        """Busca una imagen por su ID y devuelve la entidad Image.""" # Busca una imagen por su ID (Devuelve la url temporal del bucket privado)
+        # Busca el modelo de imagen por ID y lo convierte a entidad de dominio.
+        model = self.db.query(ImageModel).filter(ImageModel.id == image_id).first()
+        if not model:
+            return None
+        return ImageMapper.to_entity(model)

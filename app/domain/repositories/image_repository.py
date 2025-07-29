@@ -29,6 +29,10 @@ class ImageRepository(ABC):
         pass
 
     @abstractmethod
-    def list_by_user_id(self, user_id: UUID) -> List[Image]: # Devuelve una lista de imágenes asociadas a un usuario
+    def list_by_user_id(self, user_id: UUID) -> List[Image]: # Devuelve una lista de imágenes asociadas a un usuario(Esto servía para bucket público, Antes de implementar la url firmada con Bucket privado)
         """Devuelve todas las imágenes asociadas a un usuario."""
+        pass
+
+    @abstractmethod
+    def get_by_id(self, image_id: UUID) -> Optional[Image]:   # Busca una imagen por su ID (Devuelve la url temporal del bucket privado)
         pass

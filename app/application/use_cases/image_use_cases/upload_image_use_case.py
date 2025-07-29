@@ -40,7 +40,9 @@ class UploadImageUseCase:
             raise HTTPException(status_code=500, detail=f"Error subiendo a S3/MinIO: {e}")
 
         # Construir URL pública (o firmada en futuro)
-        dto.url = f"{settings.minio_endpoint}/{settings.minio_bucket}/{dto.file_name}"
+        # dto.url = f"{settings.minio_endpoint}/{settings.minio_bucket}/{dto.file_name}"
+        # Ahora NO generamos URL pública
+        dto.url = dto.file_name  # Guardamos solo el nombre de archivo (key)
 
         # Mapear a entidad y asignar datos
         image_entity = ImageMapper.from_create_dto(dto)

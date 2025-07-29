@@ -15,6 +15,7 @@ from infrastructure.auth.auth_dependencies import get_current_user
 # Casos de uso
 from application.use_cases.image_use_cases.upload_image_use_case import UploadImageUseCase
 from application.use_cases.image_use_cases.list_user_images_use_case import ListUserImagesUseCase
+from application.use_cases.image_use_cases.get_signed_image_url_use_case import GetSignedImageUrlUseCase
 
 # Lo de minIO / S3
 from infrastructure.s3.s3_client import s3_client  # 👈 importar el cliente
@@ -72,7 +73,7 @@ def upload_image(
     # 4. Transformar a DTO de respuesta y devolver
     return ImageMapper.to_response_dto(image_entity)
 
-
+# Listar imágenes del usuario autenticado(En caso de que la imagen esté en un bucket público. Imagen no firmada)
 @router.get("/me", response_model=List[ImageResponseDTO])
 def list_my_images(
     current_user = Depends(get_current_user),
@@ -82,3 +83,19 @@ def list_my_images(
     use_case = ListUserImagesUseCase(repo)
     images = use_case.execute(current_user.id)
     return [ImageMapper.to_response_dto(image) for image in images]
+
+
+# Devolver una URL firmada para acceder a la imagen (Bucket privado)
+@router.get("/image-url/{image_id}")
+def get_image_url(image_id: str, db: Session = Depends(get_db)):
+    # Buscar la imagen en la BD
+    image_repository = ImageRepositoryImpl(db)
+    image = image_repository.get_by_id(image_id)
+    if not image:
+        raise HTTPException(status_code=404, detail="Imagen no encontrada")
+
+    # Generar URL firmada
+    use_case = GetSignedImageUrlUseCase()
+    signed_url = use_case.execute(image.url)  # image.url ahora es el file_name
+
+    return {"url": signed_url}
