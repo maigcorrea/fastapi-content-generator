@@ -12,6 +12,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      minio:          # Espera a que MinIO esté levantado
+        condition: service_started
     restart: on-failure
 
   db:
@@ -41,3 +43,16 @@ services:
       - NODE_ENV=development
     depends_on: # garantiza que el frontend espere a que el backend esté listo
       - web
+  
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"   # API MinIO/S3
+      - "9001:9001"   # Consola web MinIO
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./data/minio:/data
