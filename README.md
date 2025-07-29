@@ -16,8 +16,9 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
   - [Protección de backend con OAuth2 + JWT (Versión antigua)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/protección_endpoints_backend_OAuth2(Antigua).md)
   - [Protección de backend con Bearer + JWT (Versión actual)](#️-protección-de-endpoints-fastapi-con-bearer--jwt-tokens-httpbearer)
   - [Sistema de Autenticación y Protección de Rutas (Frontend) con context + hook + Layout](#-sistema-de-autenticación-y-protección-de-rutas-frontend-con-context--hook--layout)
-  - [Subida de imagenes a MinIO con estructura compatible para S3](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/subida_img_s3.md)
-  - [Gestión de imagenes privadas con URLs firmadas (Presigned URLs for private buckets)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_privadas_url_firmadas.md)
+  - [Esquema de flujo de subida, obtención de URLs firmadas y renderizado de imagenes (backend+frontend)](#esquema-de-flujo-de-subida-obtención-de-urls-firmadas-y-renderizado-de-imagenes-backendfrontend)
+    - [Subida de imagenes a MinIO con estructura compatible para S3](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/subida_img_s3.md)
+    - [Gestión de imagenes privadas con URLs firmadas (Presigned URLs for private buckets)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_privadas_url_firmadas.md)
   - [Flujo de subida, obtención y renderizado de imágenes desde el frontend](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_frontend.md)
 - [Licencias y autores](#autores) 
 
@@ -772,6 +773,36 @@ flowchart TD
 - Se siguen podiendo proteger componentes individuales gracias al hook useAuthGuard.
 
 - UI se actualiza automáticamente al login/logout.
+
+
+### **Esquema de flujo de subida, obtención de URLs firmadas y renderizado de imagenes (backend+frontend)**
+
+```mermaid
+sequenceDiagram
+    participant F as Frontend (Next.js)
+    participant B as Backend (FastAPI)
+    participant S3 as MinIO / AWS S3
+
+    Note over F B S3: Subida de imagen
+    F->>B: POST /images/upload (archivo + JWT)
+    B->>S3: Subir archivo al bucket privado
+    B->>B: Guardar file_name en la BD
+    B-->>F: OK (datos de la imagen)
+
+    Note over F B S3: Visualización de imagen
+    F->>B: GET /images/me (JWT)
+    B-->>F: Lista de imágenes (file_name)
+    F->>B: GET /images/image-url/{id} (JWT)
+    B->>S3: Generar URL firmada
+    S3-->>B: URL firmada
+    B-->>F: URL firmada (localhost:9000 o amazonaws.com)
+    F->>S3: Solicitar imagen con la URL firmada
+    S3-->>F: Imagen
+```
+
+- [Subida de imagenes a MinIO con estructura compatible para S3](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/subida_img_s3.md)
+
+- [Gestión de imagenes privadas con URLs firmadas (Presigned URLs for private buckets)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_privadas_url_firmadas.md)
 
 
 ## Autores
