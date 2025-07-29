@@ -211,8 +211,7 @@ sequenceDiagram
 - URLs firmadas: expiran tras un tiempo configurable (por defecto 1h).
 
 
-
-
+**Conclusión**: Ahora tenemos un sistema robusto de almacenamiento de imágenes privadas, con acceso controlado mediante URLs firmadas. Perfecto para entornos de producción.
 
 
 

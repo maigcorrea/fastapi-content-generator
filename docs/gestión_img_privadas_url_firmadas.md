@@ -335,6 +335,8 @@ class GetSignedImageUrlUseCase:
 
 - En local (MinIO) las URLs devueltas ya son accesibles desde navegador gracias a ```MINIO_PUBLIC_HOST```.
 
+- Ideal para entornos de producción donde la seguridad es importante.
+
 
 
 ## 4. El flujo del frontend sigue siendo el mismo
