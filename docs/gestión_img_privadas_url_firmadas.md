@@ -349,7 +349,7 @@ class GetSignedImageUrlUseCase:
 
 - Si caduca, pedir una nueva.
 
-[Pincha aquí para ver la documentación del flujo de subida, obtención y renderizado de imágenes desde el frontend](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_imagenes_frontend.md)
+[Pincha aquí para ver la documentación del flujo de subida, obtención y renderizado de imágenes desde el frontend](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_frontend.md)
 
 ### 4.2. Diagrama del flujo 
 ```mermaid

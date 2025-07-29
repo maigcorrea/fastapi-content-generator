@@ -18,7 +18,7 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
   - [Sistema de Autenticación y Protección de Rutas (Frontend) con context + hook + Layout](#-sistema-de-autenticación-y-protección-de-rutas-frontend-con-context--hook--layout)
   - [Subida de imagenes a MinIO con estructura compatible para S3](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/subida_img_s3.md)
   - [Gestión de imagenes privadas con URLs firmadas (Presigned URLs for private buckets)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_privadas_url_firmadas.md)
-  - [Flujo de subida, obtención y renderizado de imágenes desde el frontend](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_imagenes_frontend.md)
+  - [Flujo de subida, obtención y renderizado de imágenes desde el frontend](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_frontend.md)
 - [Licencias y autores](#autores) 
 
 ## ✅ Idea resumida como MVP
