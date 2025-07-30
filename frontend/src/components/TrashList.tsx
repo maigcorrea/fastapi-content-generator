@@ -13,7 +13,11 @@ export const TrashList: React.FC = () => {
           <img src={img.signedUrl} alt={img.file_name} className="rounded shadow" />
           <button
             className="absolute top-2 right-2 bg-green-600 text-white px-2 py-1 rounded"
-            onClick={() => restoreFromTrash(img.id)}
+            onClick={() => {
+                if (confirm("¿Seguro que quieres restaurar esta imagen?")) {
+                restoreFromTrash(img.id);
+              }
+            }}
           >
             Restaurar
           </button>
