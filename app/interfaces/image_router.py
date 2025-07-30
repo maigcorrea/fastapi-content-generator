@@ -19,6 +19,7 @@ from application.use_cases.image_use_cases.list_user_images_use_case import List
 from application.use_cases.image_use_cases.get_signed_image_url_use_case import GetSignedImageUrlUseCase
 from application.use_cases.image_use_cases.soft_delete_image_use_case import SoftDeleteImageUseCase
 from application.use_cases.image_use_cases.list_deleted_images_use_case import ListDeletedImagesUseCase
+from application.use_cases.image_use_cases.restore_image_use_case import RestoreImageUseCase
 
 # Lo de minIO / S3
 from infrastructure.s3.s3_client import s3_client  # 👈 importar el cliente
@@ -129,3 +130,19 @@ def list_deleted_images(
     use_case = ListDeletedImagesUseCase(repo)
     images = use_case.execute(current_user.id)
     return [ImageMapper.to_response_dto(img) for img in images]
+
+
+# Restaurar una imagen eliminada (soft delete -> activa)
+from application.use_cases.image_use_cases.restore_image_use_case import RestoreImageUseCase
+
+@router.post("/restore/{image_id}")
+def restore_image(
+    image_id: UUID,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Restaura una imagen eliminada"""
+    repo = ImageRepositoryImpl(db)
+    use_case = RestoreImageUseCase(repo)
+    use_case.execute(image_id)
+    return {"message": "Imagen restaurada correctamente"}

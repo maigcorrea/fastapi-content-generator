@@ -70,3 +70,11 @@ class ImageRepositoryImpl(ImageRepository):
             .all()
         )
         return [ImageMapper.to_entity(m) for m in models]
+
+    
+    def restore(self, image_id: UUID) -> None:
+        model = self.db.query(ImageModel).filter(ImageModel.id == image_id).first()
+        if model:
+            model.is_deleted = False
+            model.deleted_at = None
+            self.db.commit()

@@ -46,3 +46,8 @@ class ImageRepository(ABC):
     def find_deleted_by_user_id(self, user_id: UUID) -> List[Image]:
         """Devuelve imágenes eliminadas (soft delete)"""
         pass
+
+    @abstractmethod
+    def restore(self, image_id: UUID) -> None:
+        """Restaura una imagen eliminada (soft delete -> activa)"""
+        pass
