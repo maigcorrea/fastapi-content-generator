@@ -10,6 +10,7 @@ const page = () => {
         <h1 className="text-xl mb-4 font-bold">Gestión de Imágenes</h1>
         <ImageUpload />
     
+    
     </>
     
   )
