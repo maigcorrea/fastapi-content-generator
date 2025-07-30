@@ -19,7 +19,7 @@ export const ImageUpload: React.FC = () =>  {
       setFile(null);
       // Y actualizamos el contexto de imágenes para reflejar la nueva imagen
       addImage(image); // Añade la imagen y obtiene su url firmada
-
+      alert("Imagen subida correctamente");
     } catch (err) {
       console.error(err);
     } finally {

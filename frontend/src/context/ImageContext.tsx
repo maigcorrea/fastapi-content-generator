@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { listMyImages, ImageResponse, getSignedImageUrl } from "@/app/services/imageService";
 import { AuthContext } from "./AuthContext";
+import axios from "axios";
 
 interface ImageWithSignedUrl extends ImageResponse {
   signedUrl?: string; // URL firmada generada
@@ -39,6 +40,7 @@ interface ImageContextType {
   images: ImageWithSignedUrl[];
   addImage: (image: ImageResponse) => void;
   refreshImages: () => void;
+  deleteImage: (imageId: string) => void; // nuevo método
 }
 
 const ImageContext = createContext<ImageContextType | null>(null);
@@ -77,8 +79,25 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     refreshImages();
   }, []);
 
+
+  // Método para borrar imagen
+  const deleteImage = async (imageId: string) => {
+    try {
+      await axios.delete(`http://localhost:8000/images/${imageId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setImages((prev) => prev.filter((img) => img.id !== imageId));
+    } catch (err) {
+      console.error("Error eliminando imagen", err);
+    }
+  };
+
+  useEffect(() => {
+    refreshImages();
+  }, []);
+
   return (
-    <ImageContext.Provider value={{ images, addImage, refreshImages }}>
+    <ImageContext.Provider value={{ images, addImage, refreshImages, deleteImage }}>
       {children}
     </ImageContext.Provider>
   );

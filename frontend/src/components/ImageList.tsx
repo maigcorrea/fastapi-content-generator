@@ -6,7 +6,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { useImageContext } from "@/context/ImageContext";
 
 export const ImageList: React.FC = () => {
-  const { images } = useImageContext();
+  const { images, deleteImage } = useImageContext();
   const { token } = useContext(AuthContext);
 
 
@@ -24,6 +24,12 @@ export const ImageList: React.FC = () => {
           ) : (
             <div className="bg-gray-100 h-32 w-full animate-pulse rounded"></div>
           )}
+           <button
+            onClick={() => deleteImage(img.id)}
+            className="mt-2 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Eliminar
+          </button>
         </div>
       ))}
     </div>
