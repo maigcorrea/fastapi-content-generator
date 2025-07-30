@@ -92,6 +92,7 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   try {
     await deleteImageService(imageId, token);
     setImages((prev) => prev.filter((img) => img.id !== imageId));
+    refreshTrash(); // <-- actualiza la papelera inmediatamente
   } catch (err) {
     console.error("Error eliminando imagen", err);
   }

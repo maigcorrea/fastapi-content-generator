@@ -25,7 +25,11 @@ export const ImageList: React.FC = () => {
             <div className="bg-gray-100 h-32 w-full animate-pulse rounded"></div>
           )}
            <button
-            onClick={() => deleteImage(img.id)}
+            onClick={() => {
+              if (confirm("¿Seguro que quieres eliminar esta imagen?")) {
+                deleteImage(img.id);
+              }
+            }}
             className="mt-2 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
           >
             Eliminar
