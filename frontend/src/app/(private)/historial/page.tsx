@@ -1,14 +1,15 @@
 'use client'
 import React from 'react'
-import { ImageUpload } from '@/components/ImageUpload'
 import { ImageList } from '@/components/ImageList'
 
 const page = () => {
   return (
     <>
      
-        <h1 className="text-xl mb-4 font-bold">Gestión de Imágenes</h1>
-        <ImageUpload />
+        <h1 className="text-xl mb-4 font-bold">Historial de Imágenes</h1>
+        <div className="mt-6">
+          <ImageList />
+        </div>
     
     </>
     
