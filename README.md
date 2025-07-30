@@ -131,6 +131,8 @@ En NestJS sueles agrupar por dominio funcional, aquí en Python preferimos agrup
 
 - Asociación imagen ↔ usuario
 
+- Planteamiento de soft delete (Lo implementaré más tarde seguramente)
+
 ### 🟧 Fase 3: Generador de hashtags
 - Usa modelo de IA como CLIP de OpenAI o alguna red preentrenada (YOLOv8, torchvision, etc.)
 
