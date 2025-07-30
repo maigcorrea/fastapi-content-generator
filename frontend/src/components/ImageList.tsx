@@ -2,12 +2,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import { listMyImages, ImageResponse } from "@/app/services/imageService";
 // import { SignedImage } from "./SignedImage"; Esto ya no hace falta porque ahora usamos el contexto de imágenes, donde ya obtenemos las URLs firmadas de la lista de imágenes. Ahora sólo las pintamos
-import { AuthContext } from "@/context/AuthContext";
 import { useImageContext } from "@/context/ImageContext";
+import { img } from "framer-motion/client";
 
 export const ImageList: React.FC = () => {
   const { images, deleteImage } = useImageContext();
-  const { token } = useContext(AuthContext);
+  const [loading, setLoading] = useState<string | null>(null);
 
 
   if (images.length === 0) return <p>No tienes imágenes</p>;
@@ -27,13 +27,16 @@ export const ImageList: React.FC = () => {
            <button
             onClick={() => {
               if (confirm("¿Seguro que quieres eliminar esta imagen?")) {
+                setLoading(img.id);
                 deleteImage(img.id);
+                setLoading(null);
               }
             }}
             className="mt-2 px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
           >
             Eliminar
           </button>
+          {loading === img.id && <p>Eliminando...</p>}
         </div>
       ))}
     </div>
