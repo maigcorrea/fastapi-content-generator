@@ -7,6 +7,7 @@ export interface ImageResponse {
   file_name: string;
   user_id: string;
   created_at: string;
+  is_deleted: boolean;
 }
 
 export const uploadImage = async (file: File, token: string): Promise<ImageResponse> => {
@@ -39,4 +40,23 @@ export const getSignedImageUrl = async (imageId: string, token: string): Promise
     },
   });
   return res.data.url;
+};
+
+export const deleteImage = async (imageId: string, token: string): Promise<void> => {
+  await axios.delete(`${API_BASE}/images/${imageId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export const listDeletedImages = async (token: string): Promise<ImageResponse[]> => {
+  const res = await axios.get(`${API_BASE}/images/trash`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.data;
+};
+
+export const restoreImage = async (imageId: string, token: string): Promise<void> => {
+  await axios.post(`${API_BASE}/images/restore/${imageId}`, {}, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };

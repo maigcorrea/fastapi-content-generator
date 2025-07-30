@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { listMyImages, ImageResponse, getSignedImageUrl } from "@/app/services/imageService";
+import { listMyImages, ImageResponse, getSignedImageUrl, listDeletedImages, restoreImage } from "@/app/services/imageService";
+import { deleteImage as deleteImageService } from "@/app/services/imageService";
 import { AuthContext } from "./AuthContext";
 import axios from "axios";
 
@@ -38,9 +39,12 @@ interface ImageWithSignedUrl extends ImageResponse {
 
 interface ImageContextType {
   images: ImageWithSignedUrl[];
+  trash: ImageWithSignedUrl[];
   addImage: (image: ImageResponse) => void;
   refreshImages: () => void;
-  deleteImage: (imageId: string) => void; // nuevo método
+  deleteImage: (imageId: string) => void; // Método para eliminar una imagen
+  refreshTrash: () => void; // Nuevo método para refrescar la papelera
+  restoreFromTrash: (imageId: string) => void; // Nuevo método para restaurar imágenes de la papelera
 }
 
 const ImageContext = createContext<ImageContextType | null>(null);
@@ -48,6 +52,7 @@ const ImageContext = createContext<ImageContextType | null>(null);
 export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { token } = useContext(AuthContext);
   const [images, setImages] = useState<ImageWithSignedUrl[]>([]);
+  const [trash, setTrash] = useState<ImageWithSignedUrl[]>([]);
 
   const fetchSignedUrls = async (images: ImageResponse[]): Promise<ImageWithSignedUrl[]> => {
     return Promise.all(
@@ -69,35 +74,48 @@ export const ImageProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Carga inicial de imágenes eliminadas (papelera)
+  const refreshTrash = async () => {
+    const imgs = await listDeletedImages(token);
+    setTrash(await fetchSignedUrls(imgs));
+  };
+
   // Ahora agregar imagen subida (instantáneo) y obtener su url firmada (El proceso anterior)-> Nuevo
   const addImage = async (image: ImageResponse) => {
     const signedUrl = await getSignedImageUrl(image.id, token); // Obtenemos la URL firmada para la nueva imagen
     setImages((prev) => [{...image, signedUrl}, ...prev]); // Agregamos la nueva imagen al estado con su URL firmada
   };
 
-  useEffect(() => {
-    refreshImages();
-  }, []);
-
 
   // Método para borrar imagen
   const deleteImage = async (imageId: string) => {
-    try {
-      await axios.delete(`http://localhost:8000/images/${imageId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setImages((prev) => prev.filter((img) => img.id !== imageId));
-    } catch (err) {
-      console.error("Error eliminando imagen", err);
+  try {
+    await deleteImageService(imageId, token);
+    setImages((prev) => prev.filter((img) => img.id !== imageId));
+  } catch (err) {
+    console.error("Error eliminando imagen", err);
+  }
+};
+
+  // Método para restaurar imagen desde la papelera
+  const restoreFromTrash = async (imageId: string) => {
+    await restoreImage(imageId, token);
+
+    // actualizar ambos estados (images y trash)
+    const restored = trash.find((img) => img.id === imageId);
+    if (restored) {
+      setTrash((prev) => prev.filter((img) => img.id !== imageId));
+      setImages((prev) => [restored, ...prev]);
     }
   };
 
   useEffect(() => {
     refreshImages();
+    refreshTrash(); 
   }, []);
 
   return (
-    <ImageContext.Provider value={{ images, addImage, refreshImages, deleteImage }}>
+    <ImageContext.Provider value={{ images, trash, addImage, refreshImages, deleteImage, refreshTrash, restoreFromTrash }}>
       {children}
     </ImageContext.Provider>
   );
