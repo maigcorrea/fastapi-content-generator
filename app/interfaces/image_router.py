@@ -18,6 +18,7 @@ from application.use_cases.image_use_cases.upload_image_use_case import UploadIm
 from application.use_cases.image_use_cases.list_user_images_use_case import ListUserImagesUseCase
 from application.use_cases.image_use_cases.get_signed_image_url_use_case import GetSignedImageUrlUseCase
 from application.use_cases.image_use_cases.soft_delete_image_use_case import SoftDeleteImageUseCase
+from application.use_cases.image_use_cases.list_deleted_images_use_case import ListDeletedImagesUseCase
 
 # Lo de minIO / S3
 from infrastructure.s3.s3_client import s3_client  # 👈 importar el cliente
@@ -115,3 +116,16 @@ def delete_image(
     use_case = SoftDeleteImageUseCase(repo)
     use_case.execute(image_id)
     return {"message": "Imagen eliminada correctamente"}
+
+
+# Listar imágenes eliminadas (soft delete) del usuario autenticado
+@router.get("/trash", response_model=List[ImageResponseDTO])
+def list_deleted_images(
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Devuelve las imágenes eliminadas (soft delete)"""
+    repo = ImageRepositoryImpl(db)
+    use_case = ListDeletedImagesUseCase(repo)
+    images = use_case.execute(current_user.id)
+    return [ImageMapper.to_response_dto(img) for img in images]

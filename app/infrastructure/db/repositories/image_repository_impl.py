@@ -61,3 +61,12 @@ class ImageRepositoryImpl(ImageRepository):
         model.deleted_at = datetime.utcnow()
         self.db.commit()
         return True
+    
+
+    def find_deleted_by_user_id(self, user_id: UUID) -> List[Image]:
+        models = (
+            self.db.query(ImageModel)
+            .filter(ImageModel.user_id == user_id, ImageModel.is_deleted == True)
+            .all()
+        )
+        return [ImageMapper.to_entity(m) for m in models]

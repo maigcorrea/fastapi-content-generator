@@ -41,3 +41,8 @@ class ImageRepository(ABC):
     def soft_delete(self, image_id: UUID) -> bool:
         """Marca una imagen como eliminada sin borrarla físicamente."""
         pass   
+
+    @abstractmethod
+    def find_deleted_by_user_id(self, user_id: UUID) -> List[Image]:
+        """Devuelve imágenes eliminadas (soft delete)"""
+        pass
