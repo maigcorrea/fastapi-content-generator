@@ -3,27 +3,13 @@ import React, { useEffect, useState, useContext } from "react";
 import { listMyImages, ImageResponse } from "@/app/services/imageService";
 import { SignedImage } from "./SignedImage";
 import { AuthContext } from "@/context/AuthContext";
+import { useImageContext } from "@/context/ImageContext";
 
 export const ImageList: React.FC = () => {
-  const [images, setImages] = useState<ImageResponse[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { images } = useImageContext();
   const { token } = useContext(AuthContext);
 
-  const fetchImages = async () => {
-    setLoading(true);
-    try {
-      const data = await listMyImages(token);
-      setImages(data);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchImages();
-  }, []);
-
-  if (loading) return <p>Cargando imágenes...</p>;
   if (images.length === 0) return <p>No tienes imágenes</p>;
 
   return (

@@ -2,19 +2,24 @@
 import React, { useState, useContext } from "react";
 import { uploadImage } from "@/app/services/imageService";
 import { AuthContext } from "@/context/AuthContext";
+import { useImageContext } from "@/context/ImageContext";
 
-export const ImageUpload: React.FC<{ onUploaded: () => void }> = ({ onUploaded }) => {
+export const ImageUpload: React.FC = () =>  {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const { token } = useContext(AuthContext);
+  const { addImage } = useImageContext();
 
   const handleUpload = async () => {
     if (!file) return;
     setLoading(true);
     try {
-      await uploadImage(file, token);
-      onUploaded(); // refresca la lista
+      const image = await uploadImage(file, token);
+      // Después de subir, limpiamos el campo de subida
       setFile(null);
+      // Y actualizamos el contexto de imágenes para reflejar la nueva imagen
+      addImage(image);
+      
     } catch (err) {
       console.error(err);
     } finally {
