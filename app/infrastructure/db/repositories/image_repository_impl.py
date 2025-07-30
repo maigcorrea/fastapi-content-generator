@@ -78,3 +78,18 @@ class ImageRepositoryImpl(ImageRepository):
             model.is_deleted = False
             model.deleted_at = None
             self.db.commit()
+
+    
+    def find_deleted_before(self, date: datetime) -> List[Image]:
+        models = (
+            self.db.query(ImageModel)
+            .filter(ImageModel.is_deleted == True, ImageModel.deleted_at <= date)
+            .all()
+        )
+        return [ImageMapper.to_entity(m) for m in models]
+
+
+
+    def hard_delete(self, image_id: UUID):
+        self.db.query(ImageModel).filter(ImageModel.id == image_id).delete()
+        self.db.commit()

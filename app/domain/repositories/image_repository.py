@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
+from datetime import datetime
 from uuid import UUID
 
 from domain.entities.image_entity import Image
@@ -50,4 +51,14 @@ class ImageRepository(ABC):
     @abstractmethod
     def restore(self, image_id: UUID) -> None:
         """Restaura una imagen eliminada (soft delete -> activa)"""
+        pass
+
+    @abstractmethod
+    def find_deleted_before(self, date: datetime) -> List[Image]:
+        """Busca imágenes eliminadas antes de una fecha específica"""
+        pass
+
+    @abstractmethod
+    def hard_delete(self, image_id: UUID):
+        """Elimina una imagen de forma permanente"""
         pass

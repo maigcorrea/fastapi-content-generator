@@ -7,6 +7,16 @@ from interfaces import user_router  # importa el router
 from interfaces import image_router  # importa el router de imágenes
 from fastapi.staticfiles import StaticFiles
 
+# Registrar el cron
+from apscheduler.schedulers.background import BackgroundScheduler
+from infrastructure.scheduler.delete_old_images import delete_old_images
+
+# Configurar el cron para eliminar imágenes antiguas (Antes de crear la instancia de FastAPI, esto asegura que el cron se inicie junto al arrancar la aplicación)
+# Sólo si se inicializa, se arranca en el evento startup
+scheduler = BackgroundScheduler()
+scheduler.add_job(delete_old_images, "cron", hour=0, minute=0)
+
+
 app = FastAPI(title="Hashtag Generator API")
 
 @app.on_event("startup")
@@ -15,8 +25,20 @@ def startup():
     Base.metadata.create_all(bind=engine)
     print("✅ Database ready.")
 
-# Montar la carpeta estática para servir imágenes
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+    # Iniciar scheduler aquí evita duplicados en desarrollo con --reload
+    if not scheduler.running:
+        scheduler.start()
+        print("⏰ Scheduler started")
+
+# Apagar scheduler al cerrar la aplicación
+@app.on_event("shutdown")
+def shutdown_event():
+    if scheduler.running:
+        scheduler.shutdown()
+        print("🛑 Scheduler stopped")
+
+# Montar la carpeta estática para servir imágenes (Ya no es necesario, ya que las imágenes se sirven desde MinIO/S3)
+#app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Registrar los routers
 app.include_router(user_router.router)  # registra el router
@@ -41,3 +63,4 @@ app.add_middleware(
 @app.get("/")
 def read_root():
     return {"message": "Hashtag Generator API is running 🚀"}
+
