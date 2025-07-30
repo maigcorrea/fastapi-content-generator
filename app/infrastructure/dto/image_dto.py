@@ -18,3 +18,4 @@ class ImageResponseDTO(BaseModel):
     file_name: str
     url: str
     created_at: Optional[datetime]
+    is_deleted: bool = False

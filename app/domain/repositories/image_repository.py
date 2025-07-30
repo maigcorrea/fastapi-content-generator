@@ -36,3 +36,8 @@ class ImageRepository(ABC):
     @abstractmethod
     def get_by_id(self, image_id: UUID) -> Optional[Image]:   # Busca una imagen por su ID (Devuelve la url temporal del bucket privado)
         pass
+
+    @abstractmethod
+    def soft_delete(self, image_id: UUID) -> bool:
+        """Marca una imagen como eliminada sin borrarla físicamente."""
+        pass   

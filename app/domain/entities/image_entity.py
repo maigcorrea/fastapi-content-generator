@@ -10,3 +10,5 @@ class Image:
     file_name: str
     url: str
     created_at: Optional[datetime] = None
+    is_deleted: bool = False
+    deleted_at: Optional[datetime] = None

@@ -16,7 +16,9 @@ class ImageMapper:
             user_id=model.user_id,
             file_name=model.file_name,
             url=model.url,
-            created_at=model.created_at
+            created_at=model.created_at,
+            is_deleted=model.is_deleted,       
+            deleted_at=model.deleted_at
         )
 
     @staticmethod
@@ -26,7 +28,9 @@ class ImageMapper:
             user_id=entity.user_id,
             file_name=entity.file_name,
             url=entity.url,
-            created_at=entity.created_at
+            created_at=entity.created_at,
+            is_deleted=entity.is_deleted,    
+            deleted_at=entity.deleted_at
         )
 
     # -------------------
@@ -51,5 +55,6 @@ class ImageMapper:
             user_id=entity.user_id,
             file_name=entity.file_name,
             url=entity.url,
-            created_at=entity.created_at
+            created_at=entity.created_at,
+            is_deleted=entity.is_deleted
         )

@@ -1,6 +1,7 @@
 import os
 import shutil
 from uuid import uuid4
+from uuid import UUID
 from typing import List
 from fastapi import APIRouter, UploadFile, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -16,6 +17,7 @@ from infrastructure.auth.auth_dependencies import get_current_user
 from application.use_cases.image_use_cases.upload_image_use_case import UploadImageUseCase
 from application.use_cases.image_use_cases.list_user_images_use_case import ListUserImagesUseCase
 from application.use_cases.image_use_cases.get_signed_image_url_use_case import GetSignedImageUrlUseCase
+from application.use_cases.image_use_cases.soft_delete_image_use_case import SoftDeleteImageUseCase
 
 # Lo de minIO / S3
 from infrastructure.s3.s3_client import s3_client  # 👈 importar el cliente
@@ -99,3 +101,17 @@ def get_image_url(image_id: str, db: Session = Depends(get_db)):
     signed_url = use_case.execute(image.url)  # image.url ahora es el file_name
 
     return {"url": signed_url}
+
+
+# Eliminar una imagen (soft delete)
+@router.delete("/{image_id}")
+def delete_image(
+    image_id: UUID,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Marca una imagen como eliminada (soft delete)"""
+    repo = ImageRepositoryImpl(db)
+    use_case = SoftDeleteImageUseCase(repo)
+    use_case.execute(image_id)
+    return {"message": "Imagen eliminada correctamente"}

@@ -1,6 +1,7 @@
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from domain.entities.image_entity import Image
 from domain.repositories.image_repository import ImageRepository
@@ -22,7 +23,7 @@ class ImageRepositoryImpl(ImageRepository):
         return ImageMapper.to_entity(image_model)
 
     def find_by_id(self, image_id: UUID) -> Optional[Image]:
-        image_model = self.db.query(ImageModel).filter(ImageModel.id == image_id).first()
+        image_model = self.db.query(ImageModel).filter(ImageModel.id == image_id, ImageModel.is_deleted == False).first()
         return ImageMapper.to_entity(image_model) if image_model else None
 
     def find_by_user_id(self, user_id: UUID) -> List[Image]:
@@ -50,3 +51,13 @@ class ImageRepositoryImpl(ImageRepository):
         if not model:
             return None
         return ImageMapper.to_entity(model)
+
+
+    def soft_delete(self, image_id: UUID) -> bool:
+        model = self.db.query(ImageModel).filter(ImageModel.id == image_id).first()
+        if not model:
+            return False
+        model.is_deleted = True
+        model.deleted_at = datetime.utcnow()
+        self.db.commit()
+        return True

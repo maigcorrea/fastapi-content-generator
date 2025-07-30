@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey
+from sqlalchemy import Column, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -15,6 +15,10 @@ class ImageModel(Base):
     file_name = Column(String, nullable=False)
     url = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    # Nuevas columnas para Soft Delete
+    is_deleted = Column(Boolean, default=False, nullable=False)
+    deleted_at = Column(DateTime, nullable=True)
+
 
     # Relación con usuario (opcional, si quieres acceso desde la ORM)
     user = relationship("UserModel", back_populates="images")
