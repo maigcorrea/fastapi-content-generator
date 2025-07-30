@@ -1,4 +1,7 @@
 "use client";
+// Este componente ya no es necesario porque ahora usamos el contexto de imágenes
+// donde ya obtenemos directamente las URLs firmadas de la lista de imágenes.
+// Se puede borrar este archivo
 import React from "react";
 import { useContext } from "react";
 import { useSignedImageUrl } from "../hooks/useSignedImageUrl";
