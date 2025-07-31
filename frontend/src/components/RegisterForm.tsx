@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { registerUser } from '@/app/services/userService'
+import { useRouter } from 'next/navigation'
 
 interface RegisterFormData {
   username: string
@@ -16,6 +17,7 @@ export default function RegisterForm() {
     email: '',
     password: '',
   })
+  const router = useRouter();
 
   // Estado para manejar mensajes de éxito o error
   const [message, setMessage] = useState<string | null>(null)
@@ -35,6 +37,7 @@ export default function RegisterForm() {
       if (!res.error) {
         setMessage('¡Usuario registrado con éxito!')
         setFormData({ username: '', email: '', password: '' }) // Limpieza del formulario
+        router.push('/login') // Redirigir al login después del registro exitoso
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response?.data?.detail) {

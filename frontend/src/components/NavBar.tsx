@@ -16,6 +16,18 @@ export default function Navbar() {
 
       {token ? (
         <div className="flex gap-4 items-center">
+          <button
+            onClick={() => {router.push('/images')}}
+            className="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700"
+          >
+            Historial
+          </button>
+          <button
+            onClick={() => {router.push('/dashboard')}}
+            className="bg-blue-600 px-3 py-1 rounded hover:bg-blue-700"
+          >
+            Inicio
+          </button>
           <span>{isAdmin ? "👑 Admin" : "🙋 Usuario"}</span>
           <button
             onClick={logout}
