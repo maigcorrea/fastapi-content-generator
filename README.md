@@ -20,6 +20,9 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
     - [Subida de imagenes a MinIO con estructura compatible para S3](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/subida_img_s3.md)
     - [Gestión de imagenes privadas con URLs firmadas (Presigned URLs for private buckets)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_privadas_url_firmadas.md)
   - [Flujo de subida, obtención y renderizado de imágenes desde el frontend](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_frontend.md)
+  - [Gestión de eliminación de imágenes](#-gestión-de-imágenes-con-soft-delete-papelera-restauración-y-cron-job)
+    - [Documentación completa acerca de la gestión de eliminación imagenes mediante soft delete, papelera, restauración de img y cron](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_eliminación_img.md)
+
 - [Licencias y autores](#autores) 
 
 ## ✅ Idea resumida como MVP
@@ -53,7 +56,7 @@ Proyecto para aprender Python orientado a IA + web + arquitectura limpia
 - WSL (Ubuntu) en Windows (opcional pero recomendado)
 - Arquitectura hexagonal
 - NextJs
-
+- Muchas más que iré añadiendo
 
 ## 🧠 Tecnologías sugeridas por capa
 | Capa | Tecnología     |
@@ -805,6 +808,58 @@ sequenceDiagram
 - [Subida de imagenes a MinIO con estructura compatible para S3](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/subida_img_s3.md)
 
 - [Gestión de imagenes privadas con URLs firmadas (Presigned URLs for private buckets)](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_img_privadas_url_firmadas.md)
+
+
+### **🗑 Gestión de imágenes con Soft Delete, Papelera, Restauración y Cron Job**
+Este módulo extiende el sistema de imágenes (MinIO/AWS S3 + URLs firmadas) añadiendo:
+
+1. Eliminación lógica (soft delete): las imágenes no se eliminan inmediatamente, sino que se marcan como borradas (is_deleted = True).
+
+2. Papelera (trash): los usuarios pueden ver y restaurar imágenes borradas antes de que se eliminen definitivamente.
+
+3. Cron Job: Se ejecuta cada medianoche y elimina definitivamente las imágenes marcadas como borradas hace más de 30 días (de la base de datos y del bucket S3/MinIO).
+
+#### Flujo final de gestión de imágenes
+**1. El usuario sube una imagen**
+
+  - Se guarda en MinIO (bucket privado).
+
+  - Se guarda el registro en BD (con ```deleted_at = NULL y is_deleted = false```).
+
+
+**2. El usuario puede ver su historial de imágenes**
+
+  - Solo se listan imágenes is_deleted = false.
+
+
+**3. Si el usuario elimina una imagen**
+
+  - Se marca como is_deleted = true y se setea deleted_at = NOW().
+
+  - La imagen ya no aparece en el historial.
+
+  - La imagen sigue estando en MinIO por si el usuario la quiere restaurar.
+
+
+**4. El usuario puede restaurar imágenes borradas**
+
+  - Si ```NOW() - deleted_at < X días```, puede restaurar (is_deleted = false y deleted_at = NULL).
+
+
+  - Si ha pasado el tiempo, ya no se podrá restaurar (porque el cron la habrá eliminado).
+
+
+**5. Tarea cron (cada día de madrugada)**
+
+  - Busca imágenes con ```is_deleted = true``` y ```deleted_at < NOW() - X días```.
+
+
+  - Borra el archivo en MinIO (s3_client.delete_object) y borra el registro en la BD.
+
+
+- [Ver documentación completa acerca de la gestión de eliminación imagenes mediante soft delete, papelera, restauración de img y cron](https://github.com/maigcorrea/fastapi-content-generator/blob/main/docs/gestión_eliminación_img.md)
+
+
 
 
 ## Autores
