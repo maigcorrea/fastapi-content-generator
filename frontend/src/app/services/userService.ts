@@ -11,6 +11,11 @@ export const registerUser = async (formData: {
   return response.data
 }
 
+export const loginUser = async (credentials: { email: string; password: string }) => {
+  const response = await axios.post(`${API_URL}/login`, credentials)
+  return response.data
+}
+
 
 export const verifyUser = async (email: string, code: string) => {
   const response = await axios.post(`${API_URL}/verify`, { email, code })

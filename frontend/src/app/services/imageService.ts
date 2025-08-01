@@ -1,4 +1,6 @@
 import axios from "axios";
+import API from './api'
+
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -14,7 +16,7 @@ export const uploadImage = async (file: File, token: string): Promise<ImageRespo
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await axios.post(`${API_BASE}/images/upload`, formData, {
+  const res = await API.post(`${API_BASE}/images/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${token}`, // 🔹 ahora pasamos el token aquí también
@@ -25,7 +27,7 @@ export const uploadImage = async (file: File, token: string): Promise<ImageRespo
 };
 
 export const listMyImages = async (token: string): Promise<ImageResponse[]> => {
-  const res = await axios.get(`${API_BASE}/images/me`, {
+  const res = await API.get(`${API_BASE}/images/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -34,7 +36,7 @@ export const listMyImages = async (token: string): Promise<ImageResponse[]> => {
 };
 
 export const getSignedImageUrl = async (imageId: string, token: string): Promise<string> => {
-  const res = await axios.get(`${API_BASE}/images/image-url/${imageId}`, {
+  const res = await API.get(`${API_BASE}/images/image-url/${imageId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -43,20 +45,20 @@ export const getSignedImageUrl = async (imageId: string, token: string): Promise
 };
 
 export const deleteImage = async (imageId: string, token: string): Promise<void> => {
-  await axios.delete(`${API_BASE}/images/${imageId}`, {
+  await API.delete(`${API_BASE}/images/${imageId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 export const listDeletedImages = async (token: string): Promise<ImageResponse[]> => {
-  const res = await axios.get(`${API_BASE}/images/trash`, {
+  const res = await API.get(`${API_BASE}/images/trash`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return res.data;
 };
 
 export const restoreImage = async (imageId: string, token: string): Promise<void> => {
-  await axios.post(`${API_BASE}/images/restore/${imageId}`, {}, {
+  await API.post(`${API_BASE}/images/restore/${imageId}`, {}, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

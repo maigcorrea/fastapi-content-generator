@@ -3,6 +3,7 @@
 import { useState, useContext, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { AuthContext } from "@/context/AuthContext";
+import { loginUser } from "@/app/services/userService";
 
 type LoginFormData = {
   email: string;
@@ -34,20 +35,9 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:8000/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const data = await loginUser(formData)
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.detail || "Login failed");
-      }
-
-      const data = await res.json();
+      
 
       // Guardar datos en localStorage
       localStorage.setItem("token", data.access_token); 
