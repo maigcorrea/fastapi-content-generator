@@ -3,18 +3,21 @@ from infrastructure.db.db_config import Base, engine
 from fastapi.middleware.cors import CORSMiddleware # Import CORS middleware
 from infrastructure.db.models.user_model import UserModel # Import the UserModel to ensure it's registered with SQLAlchemy
 from infrastructure.db.models.image_model import ImageModel  # Import the ImageModel to ensure it's registered with SQLAlchemy
+from infrastructure.db.models.pending_user_model import PendingUser  # Import the PendingUser to ensure it's registered with SQLAlchemy
 from interfaces import user_router  # importa el router
 from interfaces import image_router  # importa el router de imágenes
 from fastapi.staticfiles import StaticFiles
 
 # Registrar el cron
-from apscheduler.schedulers.background import BackgroundScheduler
-from infrastructure.scheduler.delete_old_images import delete_old_images
+# from apscheduler.schedulers.background import BackgroundScheduler
+# from infrastructure.scheduler.delete_old_images import delete_old_images
+from infrastructure.scheduler.scheduler import start_scheduler, stop_scheduler # Importa el scheduler centralizado
 
+# AHORA ESTO SE HACE DESDE scheduler.py 
 # Configurar el cron para eliminar imágenes antiguas (Antes de crear la instancia de FastAPI, esto asegura que el cron se inicie junto al arrancar la aplicación)
 # Sólo si se inicializa, se arranca en el evento startup
-scheduler = BackgroundScheduler()
-scheduler.add_job(delete_old_images, "cron", hour=0, minute=0)
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(delete_old_images, "cron", hour=0, minute=0)
 
 
 app = FastAPI(title="Hashtag Generator API")
@@ -25,17 +28,13 @@ def startup():
     Base.metadata.create_all(bind=engine)
     print("✅ Database ready.")
 
-    # Iniciar scheduler aquí evita duplicados en desarrollo con --reload
-    if not scheduler.running:
-        scheduler.start()
-        print("⏰ Scheduler started")
+    # Iniciar scheduler (con todos los cron jobs) aquí evita duplicados en desarrollo con --reload
+    start_scheduler()
 
 # Apagar scheduler al cerrar la aplicación
 @app.on_event("shutdown")
 def shutdown_event():
-    if scheduler.running:
-        scheduler.shutdown()
-        print("🛑 Scheduler stopped")
+    stop_scheduler()
 
 # Montar la carpeta estática para servir imágenes (Ya no es necesario, ya que las imágenes se sirven desde MinIO/S3)
 #app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

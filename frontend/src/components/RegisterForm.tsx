@@ -37,7 +37,14 @@ export default function RegisterForm() {
       if (!res.error) {
         setMessage('¡Usuario registrado con éxito!')
         setFormData({ username: '', email: '', password: '' }) // Limpieza del formulario
-        router.push('/login') // Redirigir al login después del registro exitoso
+        //router.push('/login') // Redirigir al login después del registro exitoso
+
+        // Como ahora se envía un correo de verificación, no redirigimos al login inmediatamente, sino a la página de verificación
+        // Guardamos email en localStorage
+        localStorage.setItem('pendingEmail', formData.email)
+
+        router.push(`/verify-register`)
+
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response?.data?.detail) {

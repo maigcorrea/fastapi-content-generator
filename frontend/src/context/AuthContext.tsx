@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useState, useEffect, useMemo, Dispatch, SetStateAction, ReactNode } from 'react';
-
+import { useRouter } from 'next/navigation';
 // Definimos el tipo del contexto de autenticación, se define la forma de un objeto: que propiedades tiene y de qué tipo son
 interface AuthContextType {
   isAdmin: boolean | null;
@@ -48,12 +48,13 @@ export const AuthProvider = ({ children } : { children: ReactNode }) => { //tipa
   // Al cargar los valores desde localStorage ya no necesitamos un useEffect para setearlos
   // AuthContext ya inicializa el estado desde localStorage, así que isLoading ahora solo sirve si más adelante haces validaciones asíncronas (ej. verificar el token en el servidor).
   const [isLoading, setIsLoading] = useState(false);
-
+  const router = useRouter();
 
   const logout = () => {
     localStorage.clear();
     setIsAdmin(null);
     setToken('');
+    router.push('/');
   };
 
   // Al cargar los valores desde localStorage ya no necesitamos un useEffect para setearlos

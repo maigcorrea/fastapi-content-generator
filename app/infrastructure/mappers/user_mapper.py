@@ -1,4 +1,5 @@
 from domain.entities.user_entity import User
+from domain.entities.pending_user import PendingUser
 from infrastructure.dto.user_dto import CreateUserDto, UserResponseDto
 from uuid import uuid4
 from datetime import datetime
@@ -25,4 +26,15 @@ class UserMapper:
             email=user.email,
             is_admin=user.is_admin,
             created_at=user.created_at
+        )
+
+    @staticmethod
+    def from_pending_user_entity(pending: PendingUser) -> User:
+        return User(
+            id=pending.id,
+            username=pending.username,
+            email=pending.email,
+            password=pending.password_hash,
+            is_admin=False,
+            created_at=datetime.utcnow()
         )

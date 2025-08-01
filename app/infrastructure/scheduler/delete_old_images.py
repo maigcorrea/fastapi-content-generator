@@ -10,6 +10,8 @@ def delete_old_images():
     logging.info("🗑 Ejecutando cron para borrar imágenes eliminadas hace más de 30 días...")
     db: Session = SessionLocal()
     repo = ImageRepositoryImpl(db)
+    deleted_count = 0
+
 
     limit_date = datetime.utcnow() - timedelta(days=30) # Fecha límite para eliminar imágenes antiguas
     old_images = repo.find_deleted_before(limit_date)
@@ -21,7 +23,10 @@ def delete_old_images():
             # Borrar de la BD
             repo.hard_delete(img.id)
             logging.info(f"✅ Imagen {img.file_name} eliminada definitivamente")
+            deleted_count += 1
         except Exception as e:
             logging.error(f"❌ Error eliminando {img.file_name}: {e}")
 
     db.close()
+
+    return deleted_count
