@@ -30,6 +30,8 @@ services:
         interval: 5s
         timeout: 5s
         retries: 5
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data   # Carpeta local -> directorio de datos de Postgres
   
   frontend:
     build:
