@@ -58,6 +58,7 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - ./data/minio:/data # Volumen local
+      #- minio_data:/data   # ahora volumen global
 
 volumes:
   postgres_data: # Declaración del volumen global
