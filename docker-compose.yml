@@ -31,7 +31,7 @@ services:
         timeout: 5s
         retries: 5
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data   # Carpeta local -> directorio de datos de Postgres
+      - postgres_data:/var/lib/postgresql/data  # Volumen global
   
   frontend:
     build:
@@ -57,4 +57,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9001"
     volumes:
-      - ./data/minio:/data
+      - ./data/minio:/data # Volumen local
+
+volumes:
+  postgres_data: # Declaración del volumen global
